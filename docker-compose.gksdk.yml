@@ -1,0 +1,10 @@
+version: '3'
+services:
+  gksdk:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    build:
+      dockerfile: Dockerfile.gksdk
+      context: .
+    volumes:
+      - .:/app

@@ -16,13 +16,13 @@ spec:
       - dns01:
           cloudflare:
             email: jeroen_bijlsma@yahoo.com
-            apiTokenSecretRef:
-              name: cloudflare-api-key-secret
-              key: api-key
-            # NOTE: an CloudFlare ApiKey is different from an ApiToken!!!
-            # apiKeySecretRef:
+            # apiTokenSecretRef:
             #   name: cloudflare-api-key-secret
             #   key: api-key
+            # NOTE: an CloudFlare ApiKey is different from an ApiToken!!!
+            apiKeySecretRef:
+              name: cloudflare-api-key-secret
+              key: api-key
         selector:
           # dnsNames:
           # - '*.dotnet-works.com'

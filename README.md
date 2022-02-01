@@ -16,6 +16,26 @@ GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | bas
 
 # GKE sdk using docker image
 
+docker-compose --file docker-compose.gksdk.yml run --rm gksdk
+
+gcloud auth login
 gcloud config set project multi-k8s-339908
 gcloud config set compute/zone europe-central2-a
 gcloud container clusters get-credentials multi-cluster
+alias k="kubectl"
+
+# Cloudflare token
+
+kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key=xxx
+
+Make sure to use the correct token type in the issuers:
+
+apiTokenSecretRef:
+  name: cloudflare-api-key-secret
+  key: api-key
+
+or:
+
+apiKeySecretRef:
+  name: cloudflare-api-key-secret
+  key: api-key
