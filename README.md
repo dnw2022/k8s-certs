@@ -10,8 +10,12 @@ docker push dnw2022/default-backend
 
 # GKE deploy with service account in github actions
 
-create a service-account for the kubernetes cluster and download the json file with the keypair. Then base64 encode it like this: 
+DOCKER_HUB_TOKEN = <docker pwd>
+GKE_PROJECT_ID = multi-k8s-339908
+GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | base64
 
-cat multi-k8s-339908-e1853ea369e6.json | base64
+# GKE sdk using docker image
 
-Add the base64 encoded string as a github secret
+gcloud config set project multi-k8s-339908
+gcloud config set compute/zone europe-central2-a
+gcloud container clusters get-credentials multi-cluster
