@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: freelance-direkt-nl-wildcard-cert
+  namespace: default
+spec:
+  secretName: freelance-direkt-nl-wildcard-tls
+  issuerRef:
+    # this references the issuer name in the issuer-letsencrypt-staging.yml file
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: "*.freelance-direkt.nl"
+  dnsNames:
+    - "*.freelance-direkt.nl"

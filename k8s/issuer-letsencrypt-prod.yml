@@ -1,0 +1,31 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    # You must replace this email address with your own.
+    # Let's Encrypt will use this to contact you about expiring
+    # certificates, and issues related to your account.
+    email: jeroen_bijlsma@yahoo.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      # Secret resource that will be used to store the account's private key.
+      name: dnw-issuer-account-key
+    solvers:
+      - dns01:
+          cloudflare:
+            email: jeroen_bijlsma@yahoo.com
+            apiTokenSecretRef:
+              name: cloudflare-api-key-secret
+              key: api-key
+            # NOTE: an CloudFlare ApiKey is different from an ApiToken!!!
+            # apiKeySecretRef:
+            #   name: cloudflare-api-key-secret
+            #   key: api-key
+        selector:
+          # dnsNames:
+          # - '*.dotnet-works.com'
+          dnsZones:
+          - "dotnet-works.com"
+          - "freelance-direkt.nl"

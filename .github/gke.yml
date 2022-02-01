@@ -1,0 +1,36 @@
+name: Create wildcard certificate in Google Kubernetes Engine (GKE) cluster
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_ID: dnw2022
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+  GKE_PROJECT_ID: ${{ secrets.GKE_PROJECT_ID }}
+  GKE_CLUSTER: multi-cluster
+  GKE_ZONE: europe-central2-a
+  GKE_SERVICE_ACCOUNT_KEY_FILE_JSON: ${{ secrets.GKE_SERVICE_ACCOUNT_KEY_FILE_JSON }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install and configure GK sdk
+        run: |-
+          curl https://sdk.cloud.google.com | bash > /dev/null;
+          source $HOME/google-cloud-sdk/path.bash.inc
+          gcloud components update kubectl
+          echo "${{ secrets.GKE_SERVICE_ACCOUNT_KEY_FILE_JSON }}" | base64 --decode > ./service-account.json
+          gcloud auth activate-service-account --key-file service-account.json
+          gcloud config set project "${{ env.GKE_PROJECT_ID }}"
+          gcloud config set compute/zone "${{ env.GKE_ZONE }}"
+          gcloud container clusters get-credentials "${{ env.GKE_CLUSTER }}"
+          chmod +x ./deploy.sh
+
+      - name: Deploy to GKE
+        run: ./deploy.sh
