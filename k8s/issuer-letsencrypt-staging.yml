@@ -29,4 +29,4 @@ spec:
           # - 'fib-calc.dotnet-works.com'
           dnsZones:
           - "dotnet-works.com"
-          - "freelance-direkt.nl"
+          - "freelancedirekt.nl"

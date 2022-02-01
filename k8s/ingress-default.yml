@@ -15,11 +15,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - '*.freelance-direkt.nl'
-    - freelance-direkt.nl
-    secretName: freelance-direkt-nl-wildcard-tls
+    - '*.freelancedirekt.nl'
+    - freelancedirekt.nl
+    secretName: freelancedirekt-nl-wildcard-tls
   rules:
-    - host: '*.freelance-direkt.nl'
+    - host: '*.freelancedirekt.nl'
       http:
         paths:
           - path: /?(.*)
