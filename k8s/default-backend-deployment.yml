@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: default-backend
-        image: dnw2020/default-backend
+        image: dnw2022/default-backend:latest
         # resources:
         #   limits:
         #     memory: "128Mi"
