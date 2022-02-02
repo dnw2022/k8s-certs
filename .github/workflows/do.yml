@@ -33,12 +33,14 @@ jobs:
       # this does not work because doctl cannot be found
       - name: Install doctl & doctl:kube-config
         run: |-
+          export PATH=$PATH:$(pwd)
           echo $PATH
-          # curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
-          # tar -xf doctl-1.70.0-linux-amd64.tar.gz
-          # chmod +x doctl
+          curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
+          tar -xf doctl-1.70.0-linux-amd64.tar.gz
+          chmod +x doctl
           # sudo mv ~/doctl /usr/local/bin
-          # ls -la
+          ls -
+          doctl
 
       # - name: Configure doctl
       #   run: |-
