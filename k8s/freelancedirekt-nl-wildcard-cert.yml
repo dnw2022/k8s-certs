@@ -9,6 +9,6 @@ spec:
     # this references the issuer name in the issuer-letsencrypt-staging.yml file
     name: letsencrypt-staging
     kind: ClusterIssuer
-  commonName: "*.freelance-direkt.nl"
+  commonName: "*.freelancedirekt.nl"
   dnsNames:
-    - "*.freelance-direkt.nl"
+    - "*.freelancedirekt.nl"
