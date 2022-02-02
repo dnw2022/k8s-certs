@@ -3,8 +3,12 @@ services:
   gksdk:
     stdin_open: true # docker run -i
     tty: true        # docker run -t
-    build:
-      dockerfile: Dockerfile.gksdk
-      context: .
+    # using this image takes longer to download
+    # but once downloaded no need to install kubectl anymore afterwards
+    # so overall a better choice I think
+    image: google/cloud-sdk:latest
+    # build:
+    #   dockerfile: Dockerfile.gksdk
+    #   context: .
     volumes:
       - .:/app

@@ -1,12 +1,12 @@
-# Useful reading
-
-https://stackoverflow.com/questions/51613842/wildcard-ssl-certificate-with-subdomain-redirect-in-kubernetes
-
 # Building, running and pushing default-backend locally
 
 docker build -f Dockerfile.dev -t dnw2022/default-backend .
 docker run  -p 8000:5000 dnw2022/default-backend
 docker push dnw2022/default-backend
+
+# Viewing kubernetes object yaml
+
+kubectl get deployment <deploymentname> -o yaml
 
 # GKE deploy with service account in github actions
 
@@ -53,6 +53,8 @@ We have 2 options for issuing certificates:
 (1) Use the ingress annotation cert-manager.io/cluster-issuer: 'letsencrypt-prod'. This will use ingress-shim to automatically create 
 Certificate objects
 (2) Create Certificate objects in our cluster manually and let cert-manager go through the process of issuing them and storing them as secrets in our cluster
+
+Useful reading: https://stackoverflow.com/questions/51613842/wildcard-ssl-certificate-with-subdomain-redirect-in-kubernetes
 
 # Cloudflare tokens
 
