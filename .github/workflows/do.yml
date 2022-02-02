@@ -26,7 +26,6 @@ jobs:
           kubectl version --client
 
       - name: Install doctl & doctl:kube-config
-        uses: digitalocean/action-doctl@v2
         run: |-
           curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-arm64.tar.gz"
           tar -xf doctl-1.70.0-linux-arm64.tar.gz
