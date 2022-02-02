@@ -6,8 +6,8 @@ metadata:
 spec:
   secretName: freelancedirekt-nl-wildcard-tls
   issuerRef:
-    # this references the issuer name in the issuer-letsencrypt-staging.yml file
-    name: letsencrypt-staging
+    # this references the issuer name in the issuer-letsencrypt-prod.yml file
+    name: letsencrypt-prod
     kind: ClusterIssuer
   commonName: "*.freelancedirekt.nl"
   dnsNames:
