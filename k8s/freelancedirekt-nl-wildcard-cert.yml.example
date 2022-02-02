@@ -1,7 +1,7 @@
 # apiVersion: cert-manager.io/v1
 # kind: Certificate
 # metadata:
-#   name: freelancedirekt-nl-wildcard-cert
+#   name: freelancedirekt-nl-wildcard-tls
 #   namespace: default
 # spec:
 #   secretName: freelancedirekt-nl-wildcard-tls
