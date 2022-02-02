@@ -39,7 +39,7 @@ jobs:
           tar -xf doctl-1.70.0-linux-amd64.tar.gz
           chmod +x doctl
           # sudo mv ~/doctl /usr/local/bin
-          ls -
+          ls -la
           doctl
 
       # - name: Configure doctl
