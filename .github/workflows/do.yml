@@ -33,7 +33,7 @@ jobs:
 
           # Configure doctl
           doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
-          doctl kubernetes cluster kubeconfig save cluster-dnw
+          doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
           kubectl get po
 
       # - name: Deploy to Digital Ocean
