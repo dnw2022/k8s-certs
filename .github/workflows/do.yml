@@ -29,11 +29,12 @@ jobs:
           curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
           tar -xf doctl-1.70.0-linux-amd64.tar.gz
           chmod +x doctl
+          doctl
 
           # Configure doctl
-          doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
-          doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
-          kubectl get po
+          #doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+          #doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
+          #kubectl get po
 
       # - name: Deploy to Digital Ocean
       #   run: ./deploy.sh
