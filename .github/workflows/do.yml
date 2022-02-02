@@ -18,35 +18,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install kubectl
+      - name: Install & configure tools
         run: |-
+          # Install kubectl
           # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           curl -LO "https://dl.k8s.io/release/v1.23.3/bin/linux/amd64/kubectl"
           chmod +x kubectl
-          kubectl version --client
 
-      # - name: Install doctl
-      #   uses: digitalocean/action-doctl@v2
-      #   with:
-      #     token: ${{ env.DO_ACCESS_TOKEN }}
-
-      # this does not work because doctl cannot be found
-      - name: Install doctl & doctl:kube-config
-        run: |-
-          export PATH=$PATH:$(pwd)
-          echo $PATH
+          # Install doctl
           curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
           tar -xf doctl-1.70.0-linux-amd64.tar.gz
           chmod +x doctl
-          # sudo mv ~/doctl /usr/local/bin
-          #doctl
 
-      - name: Configure doctl
-        run: |-
-          doctl
-          # doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
-          # doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
-          # kubectl get po
+          # Configure doctl
+          doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+          doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
+          kubectl get po
 
       # - name: Deploy to Digital Ocean
       #   run: ./deploy.sh
