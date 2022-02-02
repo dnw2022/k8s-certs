@@ -2,7 +2,7 @@ apiVersion: networking.k8s.io/v1
 # UPDATE API
 kind: Ingress
 metadata:
-  name: ingress-default-service
+  name: ingress-default-freelancedirekt-nl-service
   annotations:
     kubernetes.io/ingress.class: 'nginx'
     nginx.ingress.kubernetes.io/use-regex: 'true'
