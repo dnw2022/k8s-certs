@@ -39,14 +39,13 @@ jobs:
           tar -xf doctl-1.70.0-linux-amd64.tar.gz
           chmod +x doctl
           # sudo mv ~/doctl /usr/local/bin
-          ls -la
-          doctl
+          #doctl
 
-      # - name: Configure doctl
-      #   run: |-
-      #     # doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
-      #     doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
-      #     # kubectl get po
+      - name: Configure doctl
+        run: |-
+          doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+          # doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
+          # kubectl get po
 
       # - name: Deploy to Digital Ocean
       #   run: ./deploy.sh
