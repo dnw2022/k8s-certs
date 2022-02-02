@@ -76,7 +76,34 @@ IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-man
 
 # Cert-manager troubleshooting
 
-kubectl describe is your friend:
+kubectl describe is very useful for troubleshooting
+
+kubectl get certificates
+
+NAME                              READY   SECRET                            AGE
+freelancedirekt-nl-wildcard-tls   True    freelancedirekt-nl-wildcard-tls   5s
+
+if there is alreadu a secret for the certificate nothing will be done
+
+but if you delete the secret:
+
+kubectl delete secret freelancedirekt-nl-wildcard-tls
+
+kubectl get certificates will then display:
+
+NAME                              READY   SECRET                            AGE
+freelancedirekt-nl-wildcard-tls   False   freelancedirekt-nl-wildcard-tls   7m47s
+
+The whole flow will be initiated:
+
+(1) create CertificateRequest
+(2) create Order
+(3) create Challenge
+
+If everything is ok kubectl get certificates will show READY (true) again and will show the name of the SECRET:
+
+NAME                              READY   SECRET                            AGE
+freelancedirekt-nl-wildcard-tls   True    freelancedirekt-nl-wildcard-tls   5s
 
 kubectl get certificates 
 kubecrl describe certifcate (this will show the CertificateRequest object that was created near the bottom)
