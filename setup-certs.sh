@@ -7,3 +7,7 @@ docker push dnw2022/default-backend:latest
 
 # Apply kubernetes files
 kubectl apply -f k8s
+
+# Restart deployments
+kubectl rollout restart deployment default-backend-deployment
+kubectl rollout restart my-release-ingress-nginx-controller
