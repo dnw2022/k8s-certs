@@ -43,7 +43,8 @@ jobs:
 
       - name: Configure doctl
         run: |-
-          doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+          doctl auth --help
+          # doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
           # doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
           # kubectl get po
 
