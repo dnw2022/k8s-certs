@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  doctl:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    # image: digitalocean/doctl:latest
+    # this image is needed when running docker stack deploy
+    image: doctl
+    build:
+      dockerfile: Dockerfile
+      context: .
+    # command: doctl auth init -t $DO_ACCESS_TOKEN
+      # && doctl kubernetes cluster kubeconfig save $DO_CLUSTER_NAME
+    volumes:
+      - .:/app

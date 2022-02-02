@@ -1,0 +1,42 @@
+name: Deploy to Digital Ocean (DO) Kubernetes
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_ID: dnw2022
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+  DO_ACCESS_TOKEN: ${{ secrets.DO_ACCESS_TOKEN }}
+  DO_CLUSTER_NAME: cluster-dnw
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install kubectl
+        run: |-
+          # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/release/v1.23.3/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          kubectl version --client
+
+      - name: Install doctl & doctl:kube-config
+        uses: digitalocean/action-doctl@v2
+        run: |-
+          curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-arm64.tar.gz"
+          tar -xf doctl-1.70.0-linux-arm64.tar.gz
+          chmod +x doctl
+
+      - name: Configure doctl
+        run: |-
+          doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+          doctl kubernetes cluster kubeconfig save "${{ env.DO_CLUSTER_NAME }}""
+          kubectl get po
+
+      # - name: Deploy to Digital Ocean
+      #   run: ./deploy.sh

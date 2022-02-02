@@ -6,9 +6,9 @@ services:
     # using this image takes longer to download
     # but once downloaded no need to install kubectl anymore afterwards
     # so overall a better choice I think
-    image: google/cloud-sdk:latest
-    # build:
-    #   dockerfile: Dockerfile.gksdk
-    #   context: .
+    # image: google/cloud-sdk:latest
+    build:
+      dockerfile: Dockerfile
+      context: .
     volumes:
       - .:/app

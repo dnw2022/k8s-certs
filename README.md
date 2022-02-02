@@ -16,13 +16,25 @@ GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | bas
 
 # GKE sdk using docker image
 
-docker-compose --file docker-compose.gksdk.yml run --rm gksdk
+Manually configure container to manage cluster:
+
+docker-compose run --rm gksdk
 
 gcloud auth login
 gcloud config set project multi-k8s-339908
 gcloud config set compute/zone europe-central2-a
 gcloud container clusters get-credentials multi-cluster
 alias k="kubectl"
+
+More automated way to configure container to manage cluster:
+
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm gksdk)
+docker exec $ID /bin/bash ./configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill gksdk
 
 # Helm installation
 
@@ -122,3 +134,17 @@ To point test.freelancedirekt.nl to the cluster:
 
 Type  Name  Content            Proxy status  TTL
 A     test  <LoadBalancer IP>  DNS only      Auto
+
+# Digital Ocean Kurnetes Service (DOKS)
+
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm doctl)
+docker exec $ID /bin/bash ./configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill doctl
+
+(doctl is the service in the docker-compose file!)
+
+It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)

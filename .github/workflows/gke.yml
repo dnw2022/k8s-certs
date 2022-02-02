@@ -1,4 +1,4 @@
-name: Create wildcard certificate in Google Kubernetes Engine (GKE) cluster
+name: Deploy to Google Kubernetes Engine (GKE)
 
 on:
   push:
