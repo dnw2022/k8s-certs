@@ -24,7 +24,37 @@ gcloud config set compute/zone europe-central2-a
 gcloud container clusters get-credentials multi-cluster
 alias k="kubectl"
 
-# Cloudflare token
+# Helm installation
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+# Ingress-nginx installation using helm
+
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install my-release ingress-nginx/ingress-nginx
+
+# Cert-manager installation using help
+
+https://cert-manager.io/docs/
+
+kubectl namespace create cert-manager
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --version v1.7.0 \
+  --set installCRDs=true
+
+# Cert-manager and Ingress
+
+We have 2 options for issuing certificates:
+
+(1) Use the ingress annotation cert-manager.io/cluster-issuer: 'letsencrypt-prod'. This will use ingress-shim to automatically create 
+Certificate objects
+(2) Create Certificate objects in our cluster manually and let cert-manager go through the process of issuing them and storing them as secrets in our cluster
+
+# Cloudflare tokens
 
 Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef)
 
@@ -41,6 +71,17 @@ apiKeySecretRef:
   key: api-key
 
 api-key => kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key=xxx
+
+IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-manager
+
+# Cert-manager troubleshooting
+
+kubectl describe is your friend:
+
+kubectl get certificates 
+kubecrl describe certifcate (this will show the CertificateRequest object that was created near the bottom)
+
+Now follow the chain CertificateRequest (cr), Order and Challenge. You might also need to check the logs of the cert-manager pod in the cert-manager namespace
 
 # Restart a deployment
 
