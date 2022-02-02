@@ -37,4 +37,4 @@ jobs:
           kubectl get po
 
       # - name: Deploy to Digital Ocean
-      #   run: ./deploy.sh
+      #   run: ./setup-certs.sh
