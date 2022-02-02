@@ -10,4 +10,4 @@ kubectl apply -f k8s
 
 # Restart deployments
 kubectl rollout restart deployment default-backend-deployment
-kubectl rollout restart my-release-ingress-nginx-controller
+kubectl rollout restart deployment my-release-ingress-nginx-controller
