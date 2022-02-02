@@ -26,16 +26,29 @@ alias k="kubectl"
 
 # Cloudflare token
 
-kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key=xxx
-
-Make sure to use the correct token type in the issuers:
+Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef)
 
 apiTokenSecretRef:
-  name: cloudflare-api-key-secret
-  key: api-key
+  name: cloudflare-api-token-secret
+  key: api-token
+
+api-token => kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token=xxx
 
 or:
 
 apiKeySecretRef:
   name: cloudflare-api-key-secret
   key: api-key
+
+api-key => kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key=xxx
+
+# Restart a deployment
+
+kubectl rollout restart deployment/my-release-ingress-nginx-controller
+
+# Cloudflare configuration
+
+To point test.freelancedirekt.nl to the cluster:
+
+Type  Name  Content            Proxy status  TTL
+A     test  <LoadBalancer IP>  DNS only      Auto
