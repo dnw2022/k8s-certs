@@ -11,4 +11,6 @@ services:
       dockerfile: Dockerfile
       context: .
     volumes:
-      - .:/app
+      # better if this is different from the WORKDIR in the docker file
+      # if not, files added when running commands in the container end up on the host and in the git repo
+      - .:/src

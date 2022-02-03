@@ -24,7 +24,6 @@ gcloud auth login
 gcloud config set project multi-k8s-339908
 gcloud config set compute/zone europe-central2-a
 gcloud container clusters get-credentials multi-cluster
-alias k="kubectl"
 
 More automated way to configure container to manage cluster:
 
@@ -32,11 +31,13 @@ docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm gksdk)
-docker exec $ID /bin/bash ./configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
 docker exec -it $ID bash
 docker-compose kill gksdk
 
 # Helm installation
+
+Note that the docker image used for connecting to the cluster (GK and DOKS) already has helm installed.
 
 curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 get_helm.sh
@@ -141,7 +142,7 @@ docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm doctl)
-docker exec $ID /bin/bash ./configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
+docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
 docker exec -it $ID bash
 docker-compose kill doctl
 
