@@ -1,4 +1,4 @@
-name: Deploy to Digital Ocean (DO) Kubernetes
+name: Deploy to Digital Ocean Kubernetes Service (DOKS)
 
 on:
   push:
@@ -29,30 +29,5 @@ jobs:
       - name: Give execute permissions for shell script
         run: chmod +x ./setup-certs.sh
 
-      # Manually doing all this causes issues
-      # In the next step the shell script cannot find doctl
-      # I am not sure where to install things so they can be found in next steps
-      # Something to find out later
-      # See: https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
-      # - name: Install & configure tools
-      #   run: |-
-      #     # Install kubectl
-      #     # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      #     curl -LO "https://dl.k8s.io/release/v1.23.3/bin/linux/amd64/kubectl"
-      #     chmod +x kubectl
-
-      #     # Install doctl
-      #     curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
-      #     tar -xf doctl-1.70.0-linux-amd64.tar.gz
-      #     chmod +x doctl
-      #     export PATH=$PATH:$(pwd)
-
-      #     # Configure doctl
-      #     doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
-      #     doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
-          
-      #     # Give execute permissions for shell script
-      #     chmod +x ./setup-certs.sh
-
-      - name: Deploy to Digital Ocean
+      - name: Deploy to DOKS
         run: ./setup-certs.sh
