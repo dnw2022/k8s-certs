@@ -121,6 +121,24 @@ kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-l
 
 IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-manager  
 
+# Letsencrypt staging vs production
+
+Letsencrypt has quite strict rate limit, so be sure to test certificate issuing first with their staging environment  
+
+You can switch between issuers by chagning the annotation in both the ingress-default-dotnet-works-com.yml and ingress-default-freelancedirekt.yml file  
+
+For staging use:
+
+```
+cert-manager.io/cluster-issuer: 'letsencrypt-staging'
+```
+
+And for production:
+
+```
+cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+```
+
 # Cert-manager troubleshooting
 
 kubectl describe is very useful for troubleshooting  
