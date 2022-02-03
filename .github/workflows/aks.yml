@@ -1,0 +1,39 @@
+name: Deploy to Azure Kubernetes Engine (AKS)
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_ID: dnw2022
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+  # AKS_SERVICE_PRINCIPAL_NAME: sp-dnw
+  # AKS_APP_ID: ${{ secrets.AKS_APP_ID }}
+  # AKS_PASSWORD: ${{ secrets.AKS_PASSWORD }}
+  # AKS_TENANT_ID: ${{ secrets.AKS_TENANT_ID }}
+  # AKS_CLUSTER_NAME: cluster-dnw-aks
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # - name: Azure login
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            #az login --service-principal -u ${{ env.AKS_APP_ID }} -p ${{ env.AKS_PASSWORD }} -t ${{ env.AKS_TENANT_ID }}
+            az aks install-cli --client-version 1.21
+            kubectl version
+
+      # - name: Deploy to AKS
+      #   run: ./setup-certs.sh

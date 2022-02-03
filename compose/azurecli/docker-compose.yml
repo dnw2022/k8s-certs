@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  azurecli:
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    # image: digitalocean/doctl:latest
+    # this image is needed when running docker stack deploy
+    image: azurecli
+    build:
+      dockerfile: Dockerfile
+      context: .
+    # command: doctl auth init -t $DO_ACCESS_TOKEN
+      # && doctl kubernetes cluster kubeconfig save $DO_CLUSTER_NAME
+    volumes:
+      # better if this is different from the WORKDIR in the docker file
+      # if not, files added when running commands in the container end up on the host and in the git repo
+      - .:/src

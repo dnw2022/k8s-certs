@@ -260,6 +260,25 @@ docker-compose kill doctl
 
 It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
 
+# Azure Kurnetes Service (AKS)
+
+https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough
+https://trstringer.com/cheap-kubernetes-in-azure/
+
+```
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm azurecli)
+#docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill azurecli
+```
+
+(doctl is the service in the docker-compose file!)  
+
+It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
+
 # Switching between DOKS and GKE
 
 Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file   
