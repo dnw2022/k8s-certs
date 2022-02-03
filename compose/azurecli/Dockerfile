@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/azure-cli
 WORKDIR /app
 
 # kubectl client version and kubernetes cluster version should not differ more than 1 minor version
-RUN az aks install-cli --client-version 1.21
+RUN az aks install-cli --client-version 1.21.7
 
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 RUN chmod 700 get_helm.sh
