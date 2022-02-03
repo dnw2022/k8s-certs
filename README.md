@@ -35,13 +35,13 @@ gcloud container clusters get-credentials multi-cluster
 More automated way to configure container to manage cluster:
 
 ```
-docker-compose down --remove-orphans  
-docker-compose build  
-source ~/.secrets/.all  
-ID=$(docker-compose run -d --rm gksdk)  
-docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME  
-docker exec -it $ID bash  
-docker-compose kill gksdk  
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm gksdk)
+docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill gksdk
 ```
 
 # Helm installation
@@ -49,9 +49,9 @@ docker-compose kill gksdk
 Note that the docker image used for connecting to the cluster (GKE and DOKS) already has helm installed.
 
 ```
-curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3  
-chmod 700 get_helm.sh  
-./get_helm.sh  
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 ```
 
 # Ingress-nginx installation using helm
@@ -66,7 +66,10 @@ helm install my-release ingress-nginx/ingress-nginx
 https://cert-manager.io/docs/
 
 ```
-kubectl namespace create cert-manager  
+kubectl create namespace cert-manager
+
+helm repo add jetstack https://charts.jetstack.io
+helm repo update 
 helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
@@ -86,16 +89,22 @@ Useful reading: https://stackoverflow.com/questions/51613842/wildcard-ssl-certif
 
 # Cloudflare tokens
 
+Create Cloudflare API token in their Management portal with these permissions:
+
+| Token name	      | Permissions	                      | Resources	
+| -                 | -                                 | - 
+| {token name}	    | Zone.Zone (Read), Zone.DNS (Edit)	| Include (All zones)
+
 Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef)  
 
 ```
-apiTokenSecretRef:  
+apiTokenSecretRef:
   name: cloudflare-api-token-secret
-  key: api-token  
+  key: api-token
 ```
 
 ```
-kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token={your api token}  
+kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token={your api token}
 ```
 
 or:  
@@ -103,11 +112,11 @@ or:
 ```
 apiKeySecretRef:
   name: cloudflare-api-key-secret
-  key: api-key  
+  key: api-key
 ```
 
 ```
-kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key={your api key}  
+kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key={your api key}
 ```
 
 IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-manager  
@@ -130,11 +139,11 @@ if there is alreadu a secret for the certificate nothing will be done
 but if you delete the secret:  
 
 ```
-kubectl delete secret xxx-wildcard-tls 
+kubectl delete secret xxx-wildcard-tls
 ```
 
 ```
-kubectl get certificates  
+kubectl get certificates
 
 | NAME                            | READY | SECRET                          | AGE |
 ----------------------------------| ----- | ------------------------------- | --- |
