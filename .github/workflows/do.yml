@@ -34,7 +34,9 @@ jobs:
           # Configure doctl
           doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
           doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
-          kubectl get po
+          
+          # Give execute permissions for shell script
+          chmod +x ./setup-certs.sh
 
       - name: Deploy to Digital Ocean
         run: ./setup-certs.sh
