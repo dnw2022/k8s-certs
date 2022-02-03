@@ -139,6 +139,8 @@ And for production:
 cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 ```
 
+Note that after a deploy the certificate used will be automatically picked up by ingress-nginx, so there is no need to restart anything  
+
 # Cert-manager troubleshooting
 
 kubectl describe is very useful for troubleshooting  
@@ -250,3 +252,40 @@ docker-compose kill doctl
 (doctl is the service in the docker-compose file!)  
 
 It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
+
+# Switching between DOKS and GKE
+
+Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file   
+
+# Github Actions issue with installing doctl
+
+Manually installing doctl during the build/deploy process like below does not work
+In the next deployment step the shell script cannot find doctl  
+I am not sure where to install things so they can be found in next steps
+
+See: https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action
+
+The yml from do.yml
+
+```
+- name: Install & configure tools
+  run: |-
+    # Install kubectl
+    # curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/release/v1.23.3/bin/linux/amd64/kubectl"
+    chmod +x kubectl
+
+    # Install doctl
+    curl -LO "https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz"
+    tar -xf doctl-1.70.0-linux-amd64.tar.gz
+    chmod +x doctl
+    export PATH=$PATH:$(pwd)
+
+- name: Install & configure tools
+  run: |-
+    # Configure doctl
+    # Here you will get an error that doctl cannot be found
+    doctl
+    doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
+    doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
+```
