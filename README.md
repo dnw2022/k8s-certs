@@ -231,20 +231,20 @@ kubectl rollout restart deployment/my-release-ingress-nginx-controller
 
 To point test.freelancedirekt.nl to the cluster:  
 
-| Type  | Name | Content            | Proxy status  | TTL   |
-| ------| -----| -------------------| ------------  | ----- |
+| Type  | Name | Content            | Proxy status  | TTL
+| ------| -----| -------------------| ------------  | -
 | A     | test | {LoadBalancer IP}  | DNS only      | Auto
 
 # Digital Ocean Kurnetes Service (DOKS)
 
 ```
-docker-compose down --remove-orphans  
-docker-compose build  
-source ~/.secrets/.all  
-ID=$(docker-compose run -d --rm doctl)  
-docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME  
-docker exec -it $ID bash  
-docker-compose kill doctl  
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm doctl)
+docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill doctl
 ```
 
 (doctl is the service in the docker-compose file!)  
