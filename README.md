@@ -1,9 +1,16 @@
+# Git remote with username
+
+You can specify a git username for the git remote like this:
+
+```
+git remote add origin https://{username}@github.com/dnw2022/k8s-certs.git
+```
+
 # Building, running and pushing default-backend locally
 
 ```
-docker build -f Dockerfile.dev -t dnw2022/default-backend .  
-docker run -p 8000:5000 dnw2022/default-backend  
-docker push dnw2022/default-backend  
+docker build -f Dockerfile.dev -t dnw2022/default-backend .
+docker run -p 8000:5000 dnw2022/default-backend
 ```
 
 # Viewing kubernetes object yaml
