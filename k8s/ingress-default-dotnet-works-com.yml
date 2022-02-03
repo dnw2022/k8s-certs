@@ -13,7 +13,7 @@ metadata:
     # By not setting the cluster-issuer the shim will not automatically create certs
     # Cert-manager will still issue certificates for Certificate objects we create
     # We will just create a wildcard Certificate object that can be used for all the hosts  
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    cert-manager.io/cluster-issuer: 'letsencrypt-staging'
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
   tls:

@@ -36,5 +36,5 @@ jobs:
           doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
           kubectl get po
 
-      # - name: Deploy to Digital Ocean
-      #   run: ./setup-certs.sh
+      - name: Deploy to Digital Ocean
+        run: ./setup-certs.sh
