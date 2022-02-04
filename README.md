@@ -24,31 +24,7 @@ kubectl get deployment {deploymentname} -o yaml
 ```
 DOCKER_HUB_TOKEN = {docker pwd}  
 GKE_PROJECT_ID = multi-k8s-339908  
-GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat   multi-k8s-339908-e1853ea369e6.json | base64  
-```
-
-# GKE sdk using docker image
-
-Manually configure container to manage cluster:
-
-```
-docker-compose run --rm gksdk
-gcloud auth login  
-gcloud config set project multi-k8s-339908  
-gcloud config set compute/zone europe-central2-a  
-gcloud container clusters get-credentials multi-cluster  
-```
-
-More automated way to configure container to manage cluster:
-
-```
-docker-compose down --remove-orphans
-docker-compose build
-source ~/.secrets/.all
-ID=$(docker-compose run -d --rm gksdk)
-docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
-docker exec -it $ID bash
-docker-compose kill gksdk
+GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | base64  
 ```
 
 # Helm installation
@@ -102,7 +78,7 @@ Create Cloudflare API token in their Management portal with these permissions:
 | -                 | -                                 | - 
 | {token name}	    | Zone.Zone (Read), Zone.DNS (Edit)	| Include (All zones)
 
-Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef)  
+Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef):
 
 ```
 apiTokenSecretRef:
@@ -126,13 +102,13 @@ apiKeySecretRef:
 kubectl create secret generic cloudflare-api-key-secret -n cert-manager --from-literal api-key={your api key}
 ```
 
-IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-manager  
+IMPORTANT: the secret has to be in the cert-manager namespace. Hence -n cert-manager
 
 # Letsencrypt staging vs production
 
-Letsencrypt has quite strict rate limit, so be sure to test certificate issuing first with their staging environment  
+Letsencrypt has quite strict rate limit, so be sure to test certificate issuing first with their staging environment.
 
-You can switch between issuers by chagning the annotation in both the ingress-default-dotnet-works-com.yml and ingress-default-freelancedirekt.yml file  
+You can switch between issuers by chagning the annotation in both the ingress-default-dotnet-works-com.yml and ingress-default-freelancedirekt.yml file.
 
 For staging use:
 
@@ -146,11 +122,11 @@ And for production:
 cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 ```
 
-Note that after a deploy the certificate used will be automatically picked up by ingress-nginx, so there is no need to restart anything  
+Note that after a deploy the certificate used will be automatically picked up by ingress-nginx, so there is no need to restart anything.
 
 # Cert-manager troubleshooting
 
-kubectl describe is very useful for troubleshooting  
+kubectl describe is very useful for troubleshooting.
 
 ```
 kubectl get certificates
@@ -161,7 +137,7 @@ kubectl get certificates
 | xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
 ```
 
-if there is alreadu a secret for the certificate nothing will be done  
+if there is alreadu a secret for the certificate nothing will be done.
 
 but if you delete the secret:  
 
@@ -183,7 +159,7 @@ The whole flow will be initiated:
 (2) create Order  
 (3) create Challenge  
 
-If everything is ok kubectl get certificates will show READY (true) again and will show the name of the SECRET
+If everything is ok kubectl get certificates will show READY (true) again and will show the name of the SECRET:
 
 ```
 kubectl get certificates
@@ -193,7 +169,7 @@ kubectl get certificates
 | xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
 ```
 
-Now follow the chain CertificateRequest (cr), Order and Challenge. You might also need to check the logs of the cert-manager pod in the cert-manager namespace  
+Now follow the chain CertificateRequest (cr), Order and Challenge. You might also need to check the logs of the cert-manager pod in the cert-manager namespace:
 
 ```
 root@ae8e6b45056d:/app# k get certificates
@@ -214,7 +190,7 @@ Normal  OrderPending       3m45s  cert-manager  Waiting on certificate issuance 
 
 Usually in the order you will see that a Challende was created. You can again describe the Challenge, etc.
 
-Looking at the logs of the cert-manager pod is also useful sometimes
+Looking at the logs of the cert-manager pod is also useful sometimes:
 
 ```
 root@ae8e6b45056d:/app# k get pods -n cert-manager 
@@ -244,7 +220,31 @@ To point test.freelancedirekt.nl to the cluster:
 | ------| -----| -------------------| ------------  | -
 | A     | test | {LoadBalancer IP}  | DNS only      | Auto
 
-# Digital Ocean Kurnetes Service (DOKS)
+# GKE sdk using docker image
+
+Manually configure container to manage cluster:
+
+```
+docker-compose run --rm gksdk
+gcloud auth login  
+gcloud config set project multi-k8s-339908  
+gcloud config set compute/zone europe-central2-a  
+gcloud container clusters get-credentials multi-cluster  
+```
+
+More automated way to configure container to manage cluster:
+
+```
+docker-compose down --remove-orphans
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm gksdk)
+docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec -it $ID bash
+docker-compose kill gksdk
+```
+
+# Digital Ocean Kurnetes Service (DOKS) doctl using docker image
 
 ```
 docker-compose down --remove-orphans
@@ -260,17 +260,24 @@ docker-compose kill doctl
 
 It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
 
-# Azure Kurnetes Service (AKS)
+# Azure Kurnetes Service (AKS) az cli using docker image
 
 https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough
 https://trstringer.com/cheap-kubernetes-in-azure/
+
+To create a new cluster see compose/azurecli/create-cluster.sh file   
 
 ```
 docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm azurecli)
-#docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
+
+In the container:  
+
+az login 
+az aks get-credentials --resource-group rg-dnw --name cluster-dnw-aks
+
 docker exec -it $ID bash
 docker-compose kill azurecli
 ```
@@ -279,7 +286,7 @@ docker-compose kill azurecli
 
 It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
 
-# Switching between DOKS and GKE
+# Switching between GKE, DOKS and AKS
 
 Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file  
 
@@ -294,6 +301,48 @@ Find the service of type LoadBalancer and you will find the public IP address in
 | NAME                                    | TYPE            | CLUSTER-IP    | EXTERNAL-IP   | PORT(S)                     | AGE
 | -                                       | -               | -             | -             | -                          | -
 | my-release-ingress-nginx-controller     | LoadBalancer    | 10.0.97.119   | 40.121.242.61 | 80:32663/TCP,443:32442/TCP  | 38m
+
+# Letsencrypt rate limits
+
+If you try to issue too many certificates using the letsencrypt production environment you will get an error like this:  
+
+too many certificates (5) already issued for this exact set of domains in the last 168 hours.    
+
+You can try and copy the certificate from another kubernetes environment.  
+
+In the kubenetes environment where the certificate is available:  
+
+```
+kubectl get secret xxx-wildcard-tls -o yaml > xxx-wildcard-tls-secret.yml
+```
+
+To make it available in the host file system:
+
+```
+mv xxx-wildcard-tls-secret.yml /src
+```
+
+Then copy the certificate over, delete the old secret and create the new one by applying the yml file:  
+
+```
+mv /src/xxx-wildcard-tls-secret.yml .
+delete secrets xxx-wildcard-tls
+kubectl apply -f xxx-wildcard-tls-secret.yml
+```
+
+After a while the certificate READY flag should change from FALSE to True:
+
+| NAME                            | READY | SECRET                          | AGE |
+----------------------------------| ----- | ------------------------------- | --- |
+| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
+
+You can force the process by deleting the certificate object:
+
+```
+kubectl delete certificate xxx-wildcard-tls
+```
+
+Its good practice to keep the issued certificates somewhere safe, since you cannot re-issue them easily. The old certificates will remain valid unless revoked.
 
 # Invalid TLS certificates
 
