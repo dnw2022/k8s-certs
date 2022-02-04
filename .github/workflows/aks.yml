@@ -34,8 +34,8 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             #az login --service-principal -u ${{ env.AKS_APP_ID }} -p ${{ env.AKS_PASSWORD }} -t ${{ env.AKS_TENANT_ID }}
-            az aks install-cli --client-version 1.21.7
-            az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTERNAME }}
+            #az aks install-cli --client-version 1.21.7
+            #az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTERNAME }}
             kubectl version
 
       # - name: Deploy to AKS
