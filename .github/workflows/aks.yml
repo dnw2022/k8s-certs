@@ -12,8 +12,8 @@ env:
   AKS_APP_ID: ${{ secrets.AKS_APP_ID }}
   AKS_PASSWORD: ${{ secrets.AKS_PASSWORD }}
   AKS_TENANT_ID: ${{ secrets.AKS_TENANT_ID }}
-  AKS_RESOURCE_GROUP: 'rg-dnw'
   AKS_CLUSTER_NAME: 'cluster-dnw-aks'
+  AKS_RESOURCE_GROUP: 'rg-dnw'
 
 jobs:
   build-and-deploy:
@@ -46,7 +46,7 @@ jobs:
         uses: azure/aks-set-context@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}' 
-          cluster-name: 'cluster-dnw-aks'
+          cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
       - name: Install and configure GK sdk
