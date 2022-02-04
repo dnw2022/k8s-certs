@@ -22,7 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # See: https://github.com/Azure/login#configure-deployment-credentials
+      # https://github.com/Azure/login
+      # Also see for the SP creation: https://github.com/Azure/login#configure-deployment-credentials
+      # The scope is necessary
+      # Creating the SP like this
+      # az ad sp create-for-rbac --name $AKS_SERVICE_PRINCIPAL_NAME --role $AKS_CONTRIBUTOR_ROLE_NAME 
+      # And afterwars using az role assignment create did not work
+      # Probably because the scope is needed to create the full json
       - name: Azure login
         uses: azure/login@v1
         with:
