@@ -1,5 +1,4 @@
 apiVersion: networking.k8s.io/v1
-# UPDATE API
 kind: Ingress
 metadata:
   name: ingress-default-dotnet-works-com-service
@@ -11,7 +10,9 @@ metadata:
     # Othe Ingress services can have their own annotations
     nginx.ingress.kubernetes.io/rewrite-target: /
     # By setting the cluster-issuer the shim will not automatically create certs
-    cert-manager.io/cluster-issuer: 'letsencrypt-staging'
+    # When adding other ingress services you will usually not specify this annotation
+    # That means that the default wildcard certificate will be used
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
   tls:
