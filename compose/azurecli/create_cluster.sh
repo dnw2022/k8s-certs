@@ -24,7 +24,7 @@ az role assignment create --assignee $AKS_SERVICE_PRINCIPAL_OBJECT_ID \
 --resource-group $AKS_RESOURCE_GROUP
 
 # Delete the SP
-az ad sp delete $AKS_SERVICE_PRINCIPAL_OBJECT_ID
+az ad sp delete --id $AKS_SERVICE_PRINCIPAL_OBJECT_ID
 
 AKS_LOCATION=eastus
 AKS_CLUSTERNAME=cluster-dnw-aks
