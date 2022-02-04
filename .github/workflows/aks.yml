@@ -35,12 +35,19 @@ jobs:
       # https://github.com/Azure/aks-set-context
       # This is a pre-release and it will not show up in the marketplace directly
       # If you go to the marketplace with the link in the repo you will see it
-      - name: Azure Kubernetes set context
-        uses: Azure/aks-set-context@v1.1
+      # - name: Azure Kubernetes set context
+      #   uses: Azure/aks-set-context@v1.1
+      #   with:
+      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      #     resource-group: '${{ env.AKS_RESOURCE_GROUP }}'
+      #     cluster-name: '${{ env.AKS_CLUSTERNAME }}'
+
+      - name: Set Context for Azure Kubernetes Cluster using azure/aks-set-context@v1 action
+        uses: azure/aks-set-context@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-          resource-group: '${{ env.AKS_RESOURCE_GROUP }}'
-          cluster-name: '${{ env.AKS_CLUSTERNAME }}'
+          creds: '${{ secrets.AZURE_CREDENTIALS }}' 
+          cluster-name: cluster-dnw-aks
+          resource-group: rg-dnw
 
       - name: Azure CLI script
         uses: azure/CLI@v1
