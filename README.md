@@ -272,23 +272,24 @@ docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm azurecli)
-
-In the container:  
-
-az login 
-az aks get-credentials --resource-group rg-dnw --name cluster-dnw-aks
-
+docker exec $ID /bin/bash /src/configure.sh $AKS_RESOURCE_GROUP $AKS_CLUSTERNAME $AKS_APP_ID $AKS_PASSWORD $AKS_TENANT_ID
 docker exec -it $ID bash
 docker-compose kill azurecli
-```
 
-(doctl is the service in the docker-compose file!)  
+Manual setup in the container (after docker exec -it $ID bash above):
 
-It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
+# Interactive login with more right!
+# The login in the configure.sh script uses the Service Principal (SP)
+# You will need to use this for example when you create the cluster with the commands in compose/azurecli/create-cluster.sh
+az login
+
+# configuring the cluster to use once it was created
+az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERNAME
+``` 
 
 # Switching between GKE, DOKS and AKS
 
-Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file  
+Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file
 
 # LoadBalancer public ip
 
@@ -301,6 +302,26 @@ Find the service of type LoadBalancer and you will find the public IP address in
 | NAME                                    | TYPE            | CLUSTER-IP    | EXTERNAL-IP   | PORT(S)                     | AGE
 | -                                       | -               | -             | -             | -                          | -
 | my-release-ingress-nginx-controller     | LoadBalancer    | 10.0.97.119   | 40.121.242.61 | 80:32663/TCP,443:32442/TCP  | 38m
+
+# Testing if it works
+
+Either update your /etc/hosts file or add a Cloudflare A record that points to the load balancer public IP.  
+
+Note that navigating to https://example.dotnet-works.com/ works:  
+
+Hmmm, it seems you ventured into unknown territory :(  
+
+But https://example.dotnet-works.com/aass gives:  
+
+Cannot GET /aass  
+
+This is correct behavior. Nginx is doing the right thing, but the default-backend nodejs express server that it forwards the request to gives this message because it only handles /.   
+
+# Example ingress config
+
+The k8s/ingress-example-dotnet-works-com.yml file contains an example of an Ingress service.  
+
+The example configures https://example.dotnet-works.com/ with the default backend.
 
 # Letsencrypt rate limits
 
