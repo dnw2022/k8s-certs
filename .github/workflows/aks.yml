@@ -46,7 +46,7 @@ jobs:
         uses: azure/aks-set-context@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}' 
-          cluster-name: ${{ env.AKS_CLUSTERNAME }}
+          cluster-name: 'cluster-dnw-aks'
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
       - name: Install and configure GK sdk
