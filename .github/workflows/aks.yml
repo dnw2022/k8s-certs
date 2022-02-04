@@ -50,9 +50,9 @@ jobs:
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
-      - name: Install and configure GK sdk
+      - name: Give execute permissions for shell script
         run: |-
-          kubectl cluster-info
+          chmod +x ./setup-certs.sh
 
       - name: Deploy to AKS
         run: ./setup-certs.sh
