@@ -52,7 +52,7 @@ jobs:
 
       - name: Install and configure GK sdk
         run: |-
-          kubectl version
+          kubectl cluster-info
 
       # - name: Deploy to AKS
       #   run: ./setup-certs.sh
