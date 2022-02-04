@@ -10,10 +10,8 @@ metadata:
     # This metadata will only apply to the rules mentioned in this file
     # Othe Ingress services can have their own annotations
     nginx.ingress.kubernetes.io/rewrite-target: /
-    # By not setting the cluster-issuer the shim will not automatically create certs
-    # Cert-manager will still issue certificates for Certificate objects we create
-    # We will just create a wildcard Certificate object that can be used for all the hosts  
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    # By setting the cluster-issuer the shim will not automatically create certs
+    cert-manager.io/cluster-issuer: 'letsencrypt-staging'
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
   tls:

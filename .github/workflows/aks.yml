@@ -54,5 +54,5 @@ jobs:
         run: |-
           kubectl cluster-info
 
-      # - name: Deploy to AKS
-      #   run: ./setup-certs.sh
+      - name: Deploy to AKS
+        run: ./setup-certs.sh
