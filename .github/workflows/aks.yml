@@ -37,13 +37,6 @@ jobs:
       # https://github.com/Azure/aks-set-context
       # This is a pre-release and it will not show up in the marketplace directly
       # If you go to the marketplace with the link in the repo you will see it
-      # - name: Azure Kubernetes set context
-      #   uses: Azure/aks-set-context@v1.1
-      #   with:
-      #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
-      #     resource-group: '${{ env.AKS_RESOURCE_GROUP }}'
-      #     cluster-name: '${{ env.AKS_CLUSTERNAME }}'
-
       - name: Set Context for Azure Kubernetes Cluster using azure/aks-set-context@v1 action
         uses: azure/aks-set-context@v1
         with:
@@ -54,17 +47,6 @@ jobs:
       - name: Install and configure GK sdk
         run: |-
           kubectl version
-
-      # - name: Azure CLI script
-      #   uses: azure/CLI@v1
-      #   with:
-      #     # azcliversion: 2.32.0
-      #     inlineScript: |
-      #       #az login --service-principal -u ${{ env.AKS_APP_ID }} -p ${{ env.AKS_PASSWORD }} -t ${{ env.AKS_TENANT_ID }}
-      #       #az aks install-cli --client-version 1.21.7
-      #       #az aks install-cli
-      #       #az aks get-credentials --resource-group ${{ env.AKS_RESOURCE_GROUP }} --name ${{ env.AKS_CLUSTERNAME }}
-      #       kubectl version
 
       # - name: Deploy to AKS
       #   run: ./setup-certs.sh
