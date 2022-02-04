@@ -281,7 +281,25 @@ It is also possible to install doctl locally and switch context (between kuberne
 
 # Switching between DOKS and GKE
 
-Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file   
+Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file  
+
+# LoadBalancer public ip
+
+```
+k get service
+```
+
+Find the service of type LoadBalancer and you will find the public IP address in the EXTERNAL-IP column:  
+
+| NAME                                    | TYPE            | CLUSTER-IP    | EXTERNAL-IP   | PORT(S)                     | AGE
+| -                                       | -               | -             | -             | -                          | -
+| my-release-ingress-nginx-controller     | LoadBalancer    | 10.0.97.119   | 40.121.242.61 | 80:32663/TCP,443:32442/TCP  | 38m
+
+# Invalid TLS certificates
+
+If you see certificate errors its most likely because the certificate was issued by the letsencrypt staging environment.
+
+You will see something like "(Staging) Pretend Pear X1 certificate not trusted" when inspecting the certificate in the browser.
 
 # Github Actions issue with installing doctl
 
