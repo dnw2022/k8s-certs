@@ -46,8 +46,8 @@ jobs:
         uses: azure/aks-set-context@v1
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}' 
-          cluster-name: cluster-dnw-aks
-          resource-group: rg-dnw
+          cluster-name: ${{ env.AKS_CLUSTERNAME }}
+          resource-group: ${{ env.AKS_RESOURCE_GROUP }
 
       - name: Azure CLI script
         uses: azure/CLI@v1
