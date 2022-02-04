@@ -1,5 +1,13 @@
-AKS_RESOURCE_GROUP=rg-dnw
-AKS_LOCATION=eastus
-AKS_CLUSTERNAME=cluster-dnw-aks
+# $1 => $AKS_RESOURCE_GROUP
+# $2 => $AKS_CLUSTERNAME
+# $3 => $AKS_APP_ID
+# $4 => $AKS_PASSWORD
+# $5 => $AKS_TENANT_ID
 
-#az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERNAME
+# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
+# To login (non-interactive)
+az login --service-principal -u $3 -p $4 --tenant $5
+
+# To initialize the az cli for working with the cluster
+# This also configures things so kubectl works 
+az aks get-credentials --resource-group $1 --name $2

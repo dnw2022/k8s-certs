@@ -5,47 +5,40 @@
 # https://medium.com/@casperrubaek/how-to-create-a-cheap-kubernetes-cluster-on-azure-for-learning-purposes-ec413a2b33e4
 # https://stacksimplify.com/azure-aks/create-aks-cluster-using-az-aks-cli/
 
-AKS_RESOURCE_GROUP=rg-dnw
+# Define variables
+AKS_RESOURCE_GROUP=rg-dnw \
+AKS_SERVICE_PRINCIPAL_NAME=sp-dnw \
+AKS_SUBSCRIPTION_ID=45dad4eb-e885-48df-a5de-b1f9a02009b0 \
+AKS_CONTRIBUTOR_ROLE_NAME=Contributor \
+AKS_CONTRIBUTOR_ROLE_ID=b24988ac-6180-42a0-ab88-20f7382dd24c \
+AKS_LOCATION=eastus \
+AKS_CLUSTERNAME=cluster-dnw-aks \
 
-AKS_SERVICE_PRINCIPAL_NAME=sp-dnw
-AKS_SUBSCRIPTION_ID=45dad4eb-e885-48df-a5de-b1f9a02009b0
-AKS_CONTRIBUTOR_ROLE_NAME=Contributor
-AKS_CONTRIBUTOR_ROLE_ID=b24988ac-6180-42a0-ab88-20f7382dd24c
+# Create resource group
+az group create --name $AKS_RESOURCE_GROUP --location $AKS_LOCATION
 
+# See https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli#4-sign-in-using-a-service-principal
+# Create Service Principal (SP)
 # Only this works with github actions
 # See: https://github.com/Azure/login#configure-deployment-credentials
+# Note that the --scope option is necessary to be able to use this in github actions (login will fail if not supplied)
+# This is because the json that is logged to the console will be missing some information without the --scope option 
 az ad sp create-for-rbac \
   --name $AKS_SERVICE_PRINCIPAL_NAME --role contributor \
   --scopes /subscriptions/$AKS_SUBSCRIPTION_ID/resourceGroups/$AKS_RESOURCE_GROUP \
   --sdk-auth
 
-# Create a Service Principal (SP) with password based authentication (password will be in the json output)
-# Somehow this does not work
-# az ad sp create-for-rbac --name $AKS_SERVICE_PRINCIPAL_NAME --role $AKS_CONTRIBUTOR_ROLE_NAME
-
-# Get ObjectId based on SP displayname
-# Basic query: az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}"
-AKS_SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}" | jq -r '.[0].objectId')
-
-# Assign role to Resource Group
-# This is not needed anymore, because we already specified --scopes with az ad sp create-for-rbac
-# az role assignment create --assignee $AKS_SERVICE_PRINCIPAL_OBJECT_ID \
-# --role $AKS_CONTRIBUTOR_ROLE_NAME \
-# --resource-group $AKS_RESOURCE_GROUP
-
 # Delete the SP
-az ad sp delete --id $AKS_SERVICE_PRINCIPAL_OBJECT_ID
+# First you need to get ObjectId based on SP displayname
+# Basic query: az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}"
+# AKS_SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}" | jq -r '.[0].objectId')
+# Then you can delete it
+# az ad sp delete --id $AKS_SERVICE_PRINCIPAL_OBJECT_ID
 
-AKS_LOCATION=eastus
-AKS_CLUSTERNAME=cluster-dnw-aks
-
-az login
-
-az group create --name $AKS_RESOURCE_GROUP --location $AKS_LOCATION
-
-az ad sp list --all --query "[].{displayName:displayName, objectId:objectId}" --output tsv
-az ad sp list --display-name "{displayName}"
-
+# Create the cluster
+# Note that the options in the cheap options for node-vm-size (< 4 vCPUs) cannot be selected when you create the cluster in the azure portal
+# This is by design according to an incident
+# You can work around it in the portal by adjusting the system node pool on de second tab though ;) 
 az aks create \
     -g $AKS_RESOURCE_GROUP \
     -n $AKS_CLUSTERNAME \
@@ -60,15 +53,8 @@ az aks create \
     --node-count 1 \
     --generate-ssh-keys \
     --enable-cluster-autoscaler \
- 
-az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERNAME
 
-# For service account creation see:
-# https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli#4-sign-in-using-a-service-principal
-
-
-
-# https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli
-az login --service-principal -u <app-id> -p <password-or-cert> --tenant <tenant>
-
-az group delete --name $AKS_RESOURCE_GROUP --yes --no-wait
+# To delete the resource group (and the kubernetes cluster in it)
+# The first time I executed this command nothing seemed to happen
+# Then I removed the --yes and --no-wait options and that seemed to work fine
+# az group delete --name $AKS_RESOURCE_GROUP --yes --no-wait

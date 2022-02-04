@@ -7,6 +7,7 @@ RUN az aks install-cli --client-version 1.21.7
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 RUN chmod 700 get_helm.sh
 RUN ./get_helm.sh
+RUN rm ./get_helm.sh
 
 RUN apk add bash-completion
 # https://stedolan.github.io/jq/manual/#TypesandValues
