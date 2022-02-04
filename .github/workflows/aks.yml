@@ -42,6 +42,10 @@ jobs:
       #     resource-group: '${{ env.AKS_RESOURCE_GROUP }}'
       #     cluster-name: '${{ env.AKS_CLUSTERNAME }}'
 
+      - name: Display environment variables
+        run: |-
+          echo env
+
       - name: Set Context for Azure Kubernetes Cluster using azure/aks-set-context@v1 action
         uses: azure/aks-set-context@v1
         with:
