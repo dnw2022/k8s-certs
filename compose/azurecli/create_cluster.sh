@@ -17,20 +17,26 @@ AKS_ACR_NAME=acrdnw \
 AKS_ACR_LOGIN_SERVER=acrdnw.azurecr.io
 
 # Variables (set again by running appropriate commands below)
-AKS_CR_ID=/subscriptions/45dad4eb-e885-48df-a5de-b1f9a02009b0/resourceGroups/rg-dnw/providers/Microsoft.ContainerRegistry/registries/acrdnw
+AKS_CR_ID=/subscriptions/45dad4eb-e885-48df-a5de-b1f9a02009b0/resourceGroups/rg-dnw/providers/Microsoft.ContainerRegistry/registries/acrdnw \
 AKS_SERVICE_PRINCIPAL_OBJECT_ID=8ff24eaf-8877-4ef1-b58f-3d17e3768208
 
 # Create resource group
 az group create --name $AKS_RESOURCE_GROUP --location $AKS_LOCATION
 
 # Create Azure Container Registry (ACR)
-# Note that "loginServer": "acrdnw.azurecr.io". You will need this later
+# Only when you want to use the ACR
+# Docker Hub only supports public image repos if you stick with the free account
+# Note "loginServer": "acrdnw.azurecr.io". You will need this later
 az acr create \
   --resource-group $AKS_RESOURCE_GROUP \
   --name $AKS_ACR_NAME --sku Basic
 
 # Obtain the full registry ID for subsequent commands
 AKS_ACR_ID=$(az acr show --name $AKS_ACR_NAME --query "id" --output tsv)
+
+# Attach ACR to cluster
+# See: https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli
+az aks update -n $AKS_CLUSTERNAME -g $AKS_RESOURCE_GROUP --attach-acr $AKS_ACR_NAME
 
 # See https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli#4-sign-in-using-a-service-principal
 # Create Service Principal (SP)

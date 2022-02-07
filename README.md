@@ -290,7 +290,7 @@ az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERN
 
 # Switching between GKE, DOKS and AKS
 
-Just point to the DOKS or GKE load balancer in the Cloudflare portal or temporarily update your /etc/hosts file
+Just point to the DOKS, GKE or AKS load balancer in the Cloudflare portal under DNS entries or temporarily update your /etc/hosts file.
 
 # LoadBalancer public ip
 
@@ -407,6 +407,7 @@ The yml from do.yml
 
 # Azure Container Registry (ACR)
 
+https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli
 https://docs.microsoft.com/en-us/azure/container-registry/container-registry-delete  
 
 For giving a Service Principal (SP) rights to the ACR see the compose/azurecli/create_cluster.sh files.  
