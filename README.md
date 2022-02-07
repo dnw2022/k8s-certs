@@ -268,6 +268,7 @@ https://trstringer.com/cheap-kubernetes-in-azure/
 To create a new cluster see compose/azurecli/create-cluster.sh file   
 
 ```
+cd ./compose/azurecli
 docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
@@ -403,3 +404,27 @@ The yml from do.yml
     doctl auth init -t "${{ env.DO_ACCESS_TOKEN }}"
     doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
 ```
+
+# Azure Container Registry (ACR)
+
+https://docs.microsoft.com/en-us/azure/container-registry/container-registry-delete  
+
+For giving a Service Principal (SP) rights to the ACR see the compose/azurecli/create_cluster.sh files.  
+
+to be able to build images within the azcli container you can update the docker-compose.yml file:
+
+ azurecli:
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+Also the docker cli needs to be installed in the container by updating the Dockerfile:
+
+# To be able to run docker in docker
+# Make sure in the docker-compose file to:
+# (1) add volume for /var/run/docker.sock:/var/run/docker.sock
+# (2) set privileged: true
+RUN apk add --update docker openrc
+RUN rc-update add docker boot
+
+building images seems to work, but trying to tag and push them gives errors that they cannot be found?

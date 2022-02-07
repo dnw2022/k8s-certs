@@ -13,9 +13,24 @@ AKS_CONTRIBUTOR_ROLE_NAME=Contributor \
 AKS_CONTRIBUTOR_ROLE_ID=b24988ac-6180-42a0-ab88-20f7382dd24c \
 AKS_LOCATION=eastus \
 AKS_CLUSTERNAME=cluster-dnw-aks \
+AKS_ACR_NAME=acrdnw \
+AKS_ACR_LOGIN_SERVER=acrdnw.azurecr.io
+
+# Variables (set again by running appropriate commands below)
+AKS_CR_ID=/subscriptions/45dad4eb-e885-48df-a5de-b1f9a02009b0/resourceGroups/rg-dnw/providers/Microsoft.ContainerRegistry/registries/acrdnw
+AKS_SERVICE_PRINCIPAL_OBJECT_ID=8ff24eaf-8877-4ef1-b58f-3d17e3768208
 
 # Create resource group
 az group create --name $AKS_RESOURCE_GROUP --location $AKS_LOCATION
+
+# Create Azure Container Registry (ACR)
+# Note that "loginServer": "acrdnw.azurecr.io". You will need this later
+az acr create \
+  --resource-group $AKS_RESOURCE_GROUP \
+  --name $AKS_ACR_NAME --sku Basic
+
+# Obtain the full registry ID for subsequent commands
+AKS_ACR_ID=$(az acr show --name $AKS_ACR_NAME --query "id" --output tsv)
 
 # See https://docs.microsoft.com/en-us/cli/azure/create-an-azure-service-principal-azure-cli#4-sign-in-using-a-service-principal
 # Create Service Principal (SP)
@@ -24,16 +39,21 @@ az group create --name $AKS_RESOURCE_GROUP --location $AKS_LOCATION
 # Note that the --scope option is necessary to be able to use this in github actions (login will fail if not supplied)
 # This is because the json that is logged to the console will be missing some information without the --scope option 
 az ad sp create-for-rbac \
-  --name $AKS_SERVICE_PRINCIPAL_NAME --role contributor \
+  --name $AKS_SERVICE_PRINCIPAL_NAME \
+  --role contributor \
   --scopes /subscriptions/$AKS_SUBSCRIPTION_ID/resourceGroups/$AKS_RESOURCE_GROUP \
   --sdk-auth
 
 # Delete the SP
 # First you need to get ObjectId based on SP displayname
 # Basic query: az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}"
-# AKS_SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}" | jq -r '.[0].objectId')
+AKS_SERVICE_PRINCIPAL_OBJECT_ID=$(az ad sp list --filter "displayname eq '${AKS_SERVICE_PRINCIPAL_NAME}'" --query "[].{displayName:displayName, objectId:objectId}" | jq -r '.[0].objectId')
 # Then you can delete it
 # az ad sp delete --id $AKS_SERVICE_PRINCIPAL_OBJECT_ID
+
+# Assign acrppush role to SP
+# https://github.com/MicrosoftDocs/azure-docs/blob/master/articles/container-registry/container-registry-auth-service-principal.md
+az role assignment create --assignee $AKS_SERVICE_PRINCIPAL_OBJECT_ID --scope $AKS_ACR_ID --role acrpush
 
 # Create the cluster
 # Note that the options in the cheap options for node-vm-size (< 4 vCPUs) cannot be selected when you create the cluster in the azure portal
