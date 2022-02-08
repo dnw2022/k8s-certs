@@ -43,9 +43,10 @@ jobs:
 
       - name: Create images
         run: |-
+          echo $IMAGE_TAG
           docker build -t $IMAGE_TAG -f ./default-backend/Dockerfile ./default-backend
-          docker tag $IMAGE_TAG $REGISTRY_TAG
-          docker push $REGISTRY_TAG
+          # docker tag $IMAGE_TAG $REGISTRY_TAG
+          # docker push $REGISTRY_TAG
 
       - name: Save DigitalOcean kubeconfig
         run: doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
