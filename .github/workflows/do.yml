@@ -37,7 +37,7 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo 'IMAGE_TAG="${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}"' >> $GITHUB_ENV
+          echo 'IMAGE_TAG=${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}' >> $GITHUB_ENV
           # registry.digitalocean.com/dnw2022/default-backend:latest
           echo 'REGISTRY_TAG="${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}"' >> $GITHUB_ENV
 
