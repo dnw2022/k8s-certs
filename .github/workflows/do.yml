@@ -26,8 +26,17 @@ jobs:
       - name: Save DigitalOcean kubeconfig
         run: doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
 
-      - name: Give execute permissions for shell script
-        run: chmod +x ./setup-certs.sh
+      - name: Store secrets with certificates in cluster
+        run: |-
+          # apply yml with the secret containing the dotnet-works.com wildcard cert 
+          echo "${{ secrets.DNW_CERT_SECRET }}" | base64 --decode > ./dnw-cert-secret.yml
+          kubectl apply -f ./dnw-cert-secret.yml
+
+          # apply yml with the secret containing the freelancedirekt.nl wildcard cert 
+          echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
+          kubectl apply -f ./fld-cert-secret.yml
 
       - name: Deploy to DOKS
-        run: ./setup-certs.sh
+        run: |-
+          chmod +x ./setup-certs.sh
+          ./setup-certs.sh
