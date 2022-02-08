@@ -368,7 +368,16 @@ Its good practice to keep the issued certificates somewhere safe, since you cann
 
 # Deploying certificates
 
-The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created. 
+The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created.  
+
+There is an issue with having too much meta data in the secrets. See: https://stackoverflow.com/questions/51297136/kubectl-error-the-object-has-been-modified-please-apply-your-changes-to-the-la
+
+Remove this meta data from the secrets:
+
+creationTimestamp  
+resourceVersion  
+selfLink  
+uid  
 
 # Invalid TLS certificates
 
