@@ -39,27 +39,29 @@ jobs:
         run: |
           echo 'IMAGE_TAG=${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}' >> $GITHUB_ENV
           # registry.digitalocean.com/dnw2022/default-backend:latest
-          echo 'REGISTRY_TAG="${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}"' >> $GITHUB_ENV
+          echo 'REGISTRY_TAG=${{ env.REGISTRY }}/${{ env.REPO }}/${{ env.IMAGE }}:${{ env.TAG }}' >> $GITHUB_ENV
 
       - name: Create images
         run: |-
           echo $IMAGE_TAG
           docker build -t $IMAGE_TAG -f ./default-backend/Dockerfile ./default-backend
-          # docker tag $IMAGE_TAG $REGISTRY_TAG
-          # docker push $REGISTRY_TAG
+          docker tag $IMAGE_TAG $REGISTRY_TAG
+          docker push $REGISTRY_TAG
 
       - name: Save DigitalOcean kubeconfig
         run: doctl kubernetes cluster kubeconfig save ${{ env.DO_CLUSTER_NAME }}
 
-      - name: Store secrets with certificates in cluster
-        run: |-
-          # apply yml with the secret containing the dotnet-works.com wildcard cert 
-          echo "${{ secrets.DNW_CERT_SECRET }}" | base64 --decode > ./dnw-cert-secret.yml
-          kubectl apply -f ./dnw-cert-secret.yml
+      # Issue: https://stackoverflow.com/questions/51297136/kubectl-error-the-object-has-been-modified-please-apply-your-changes-to-the-la
+      # kubectl get deployment <DEPLOYMENT-NAME> -o yaml | grep resourceVersion
+      # - name: Store secrets with certificates in cluster
+      #   run: |-
+      #     # apply yml with the secret containing the dotnet-works.com wildcard cert 
+      #     echo "${{ secrets.DNW_CERT_SECRET }}" | base64 --decode > ./dnw-cert-secret.yml
+      #     kubectl apply -f ./dnw-cert-secret.yml
 
-          # apply yml with the secret containing the freelancedirekt.nl wildcard cert 
-          echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
-          kubectl apply -f ./fld-cert-secret.yml
+      #     # apply yml with the secret containing the freelancedirekt.nl wildcard cert 
+      #     echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
+      #     kubectl apply -f ./fld-cert-secret.yml
 
       - name: Deploy to DOKS
         run: |-
