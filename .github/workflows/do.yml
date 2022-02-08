@@ -1,6 +1,7 @@
 name: Deploy to Digital Ocean Kubernetes Service (DOKS)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
