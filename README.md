@@ -366,6 +366,10 @@ kubectl delete certificate xxx-wildcard-tls
 
 Its good practice to keep the issued certificates somewhere safe, since you cannot re-issue them easily. The old certificates will remain valid unless revoked.
 
+# Deploying certificates
+
+The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created. 
+
 # Invalid TLS certificates
 
 If you see certificate errors its most likely because the certificate was issued by the letsencrypt staging environment.
