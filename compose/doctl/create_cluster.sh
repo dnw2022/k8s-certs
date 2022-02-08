@@ -20,7 +20,7 @@ doctl kubernetes cluster create $DO_CLUSTER_NAME \
 
 # Allow the kubernetes cluster to pull images from the 
 # https://github.com/digitalocean/doctl/issues/847
-doctl kubernetes cluster registry add $DO_REGISTRY_NAME
+doctl kubernetes cluster registry add $DO_CLUSTER_NAME
 # This does not seem to work 
 # doctl registry kubernetes-manifest | kubectl apply -f -
 
