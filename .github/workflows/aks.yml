@@ -1,4 +1,4 @@
-name: Deploy to Azure Kubernetes Engine (AKS)
+name: Deploy to Azure Kubernetes Service (AKS)
 
 on:
   workflow_dispatch:
