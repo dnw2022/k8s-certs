@@ -38,7 +38,7 @@ jobs:
         run: |-
           az acr login --name $AKS_ACR_NAME
           ACR_TAG="${{ env.AKS_ACR_LOGIN_SERVER }}/${{ env.RELEASE_NAME }}:${{ env.TAG }}"
-          docker build -t $ACR_TAG .
+          docker build -t $ACR_TAG . -f ./default-backend/Dockerfile ./default-backend
           docker push $ACR_TAG
           az acr repository list --name $AKS_ACR_NAME --output table
 
