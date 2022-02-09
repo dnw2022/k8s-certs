@@ -22,7 +22,7 @@ jobs:
       - name: Build and push images to Docker Hub
         run: |-
           echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_ID --password-stdin
-          TAG=default-backend:latest
+          TAG=dnw2022/default-backend:latest
           docker build -t $TAG -f ./default-backend/Dockerfile  ./default-backend
           docker push $TAG
 
