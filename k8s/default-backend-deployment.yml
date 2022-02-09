@@ -13,8 +13,8 @@ spec:
     spec:
       containers:
       - name: default-backend
-        # image: dnw2022/default-backend:latest
-        image: registry.digitalocean.com/dnw2022/default-backend:latest
+        image: dnw2022/default-backend:latest
+        # image: registry.digitalocean.com/dnw2022/default-backend:latest
         # resources:
         #   limits:
         #     memory: "128Mi"
