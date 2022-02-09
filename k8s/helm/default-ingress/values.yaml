@@ -1,0 +1,6 @@
+CertIssuer: 'letsencrypt-prod'
+BackendService: 'default-backend-service'
+BackendPort: 5000
+Domains:
+  - dotnet-works.com
+  - freelancedirekt.nl 

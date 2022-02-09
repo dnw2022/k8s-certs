@@ -1,19 +1,18 @@
 name: Deploy to Azure Kubernetes Engine (AKS)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
 
 env:
-  DOCKER_ID: dnw2022
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
-  # AKS_SERVICE_PRINCIPAL_NAME: sp-dnw
-  AKS_APP_ID: ${{ secrets.AKS_APP_ID }}
-  AKS_PASSWORD: ${{ secrets.AKS_PASSWORD }}
-  AKS_TENANT_ID: ${{ secrets.AKS_TENANT_ID }}
   AKS_CLUSTER_NAME: 'cluster-dnw-aks'
   AKS_RESOURCE_GROUP: 'rg-dnw'
+  AKS_ACR_NAME: 'acrdnw'
+  AKS_ACR_LOGIN_SERVER: 'acrdnw.azurecr.io'
+  RELEASE_NAME: default-backend
+  TAG: latest
 
 jobs:
   build-and-deploy:
@@ -33,6 +32,15 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # https://docs.microsoft.com/en-us/azure/container-registry/container-registry-get-started-azure-cli
+      - name: Build images and push them to Azure Container Service (ACR)
+        run: |-
+          az acr login --name $AKS_ACR_NAME
+          ACR_TAG="${{ env.AKS_ACR_LOGIN_SERVER }}/${{ env.RELEASE_NAME }}:${{ env.TAG }}"
+          docker build -t $ACR_TAG .
+          docker push $ACR_TAG
+          az acr repository list --name $AKS_ACR_NAME --output table
 
       # https://github.com/Azure/setup-kubectl
       - name: Kubectl tool installer
@@ -60,7 +68,17 @@ jobs:
           echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
           kubectl apply -f ./fld-cert-secret.yml
 
+      # https://github.com/marketplace/actions/helm-tool-installer
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v2.0
+
       - name: Deploy to AKS
         run: |-
-          chmod +x ./setup-certs.sh
-          ./setup-certs.sh
+          helm upgrade /default-backend ./k8s/helm/default-backend \
+            --set PrivateContainerRegistry="${{ env.AKS_ACR_LOGIN_SERVER }}/" \
+            --install
+          
+          helm upgrade /cert-issuers ./k8s/helm/cert-issuers --install
+          helm upgrade /default-ingress ./k8s/helm/default-ingress --install
+
+          kubectl rollout restart deployment /default-backend-deployment

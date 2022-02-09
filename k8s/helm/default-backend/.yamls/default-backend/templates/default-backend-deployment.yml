@@ -1,0 +1,25 @@
+---
+# Source: default-backend/templates/default-backend-deployment.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-deployment
+spec:
+  selector:
+    matchLabels:
+      app: release-name
+  template:
+    metadata:
+      labels:
+        app: release-name
+    spec:
+      containers:
+      - name: release-name
+        image: registry.digitalocean.com/dnw2022/release-name:latest
+        # image: registry.digitalocean.com/dnw2022/default-backend:latest
+        # resources:
+        #   limits:
+        #     memory: "128Mi"
+        #     cpu: "500m"
+        ports:
+        - containerPort: 80

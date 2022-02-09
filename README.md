@@ -445,6 +445,8 @@ building images seems to work, but trying to tag and push them gives errors that
 
 # Helm
 
+Note that when you already installed objects in the k8s cluster using kubectl apply, you will need to delete those resources first (imperatively) before the helm install command works.  
+
 Some useful helm commands:
 
 ```

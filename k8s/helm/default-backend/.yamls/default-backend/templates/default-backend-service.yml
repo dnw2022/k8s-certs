@@ -1,0 +1,13 @@
+---
+# Source: default-backend/templates/default-backend-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-service
+spec:
+  type: ClusterIP
+  selector:
+    app: release-name
+  ports:
+  - port: 80
+    targetPort: 5000

@@ -1,0 +1,3 @@
+helm template '.' --output-dir '.yamls' 
+
+helm install cert-issuers . --dry-run --debug

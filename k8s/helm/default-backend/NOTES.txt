@@ -1,0 +1,9 @@
+helm template '.' --output-dir '.yamls'
+
+helm template '.' \
+  --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
+  --output-dir '.yamls'
+
+helm install default-backend . \
+  --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
+  --dry-run --debug

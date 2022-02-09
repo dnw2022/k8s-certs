@@ -1,0 +1,132 @@
+---
+# Source: default-ingress/templates/ingress.yml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-dotnet-works-com-ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    # Rewrite url to always go to /
+    # This metadata will only apply to the rules mentioned in this file
+    # Othe Ingress services can have their own annotations
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # By setting the cluster-issuer the shim will not automatically create certs
+    # When adding other ingress services you will usually not specify this annotation
+    # That means that the default wildcard certificate will be used
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  tls:
+  - hosts:
+    - '*.dotnet-works.com'
+    - 'dotnet-works.com'
+    secretName: dotnet-works-com-wildcard-tls
+  rules:
+    - host: '*.dotnet-works.com'
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: default-backend-service
+                port:
+                  number: 5000
+---
+# Source: default-ingress/templates/ingress.yml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-dotnet-works.com-ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # Since the tls section has been commented out and we rely on the wildcard certificate this is not needed anymore
+    # cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  # Leaving this here in combination with the cert-manager.io/cluster-issuer annotation will issue a new tls certificate for test.dotnet-works.com
+  # By leaving is out we can use the generic Ingress configuration and default TLS certificate for *.dotnet-works.com
+#  tls:
+#    - hosts:
+#        - test.dotnet-works.com
+#      secretName: test-dotnet-works.com-tls
+  rules:
+    - host: test.dotnet-works.com
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: default-backend-service
+                port:
+                  number: 5000
+---
+# Source: default-ingress/templates/ingress.yml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: default-freelancedirekt-nl-ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    # Rewrite url to always go to /
+    # This metadata will only apply to the rules mentioned in this file
+    # Othe Ingress services can have their own annotations
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # By setting the cluster-issuer the shim will not automatically create certs
+    # When adding other ingress services you will usually not specify this annotation
+    # That means that the default wildcard certificate will be used
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  tls:
+  - hosts:
+    - '*.freelancedirekt.nl'
+    - 'freelancedirekt.nl'
+    secretName: freelancedirekt-nl-wildcard-tls
+  rules:
+    - host: '*.freelancedirekt.nl'
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: default-backend-service
+                port:
+                  number: 5000
+---
+# Source: default-ingress/templates/ingress.yml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-freelancedirekt.nl-ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # Since the tls section has been commented out and we rely on the wildcard certificate this is not needed anymore
+    # cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+spec:
+  # Leaving this here in combination with the cert-manager.io/cluster-issuer annotation will issue a new tls certificate for test.freelancedirekt.nl
+  # By leaving is out we can use the generic Ingress configuration and default TLS certificate for *.freelancedirekt.nl
+#  tls:
+#    - hosts:
+#        - test.freelancedirekt.nl
+#      secretName: test-freelancedirekt.nl-tls
+  rules:
+    - host: test.freelancedirekt.nl
+      http:
+        paths:
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: default-backend-service
+                port:
+                  number: 5000
