@@ -74,11 +74,11 @@ jobs:
 
       - name: Deploy to AKS
         run: |-
-          helm upgrade /default-backend ./k8s/helm/default-backend \
+          helm upgrade default-backend ./k8s/helm/default-backend \
             --set PrivateContainerRegistry="${{ env.AKS_ACR_LOGIN_SERVER }}/" \
             --install
           
-          helm upgrade /cert-issuers ./k8s/helm/cert-issuers --install
-          helm upgrade /default-ingress ./k8s/helm/default-ingress --install
+          helm upgrade cert-issuers ./k8s/helm/cert-issuers --install
+          helm upgrade default-ingress ./k8s/helm/default-ingress --install
 
           kubectl rollout restart deployment /default-backend-deployment
