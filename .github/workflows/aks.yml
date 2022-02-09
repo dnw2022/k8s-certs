@@ -11,8 +11,6 @@ env:
   AKS_RESOURCE_GROUP: 'rg-dnw'
   AKS_ACR_NAME: 'acrdnw'
   AKS_ACR_LOGIN_SERVER: 'acrdnw.azurecr.io'
-  RELEASE_NAME: default-backend
-  TAG: latest
 
 jobs:
   build-and-deploy:
@@ -37,7 +35,7 @@ jobs:
       - name: Build images and push them to Azure Container Service (ACR)
         run: |-
           az acr login --name $AKS_ACR_NAME
-          ACR_TAG="${{ env.AKS_ACR_LOGIN_SERVER }}/${{ env.RELEASE_NAME }}:${{ env.TAG }}"
+          ACR_TAG="${{ env.AKS_ACR_LOGIN_SERVER }}/default-backend:latest"
           docker build -t $ACR_TAG -f ./default-backend/Dockerfile ./default-backend
           docker push $ACR_TAG
           az acr repository list --name $AKS_ACR_NAME --output table
