@@ -225,11 +225,12 @@ To point test.freelancedirekt.nl to the cluster:
 Manually configure container to manage cluster:
 
 ```
+docker-compose build
 docker-compose run --rm gksdk
-gcloud auth login  
-gcloud config set project multi-k8s-339908  
-gcloud config set compute/zone europe-central2-a  
-gcloud container clusters get-credentials multi-cluster  
+gcloud auth login
+gcloud config set project kubernetes-339906
+gcloud config set compute/zone europe-central2-a
+gcloud container clusters get-credentials multi-cluster
 ```
 
 More automated way to configure container to manage cluster:
