@@ -442,3 +442,20 @@ RUN apk add --update docker openrc
 RUN rc-update add docker boot
 
 building images seems to work, but trying to tag and push them gives errors that they cannot be found?
+
+# Helm
+
+Some useful helm commands:
+
+```
+helm template './helm' \
+  --output-dir './helm/.yamls'
+
+helm template './helm' \
+  --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
+  --output-dir './helm/.yamls'
+
+helm install aspnetapp ./helm \
+  --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
+  --dry-run --debug
+```
