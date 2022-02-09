@@ -50,9 +50,17 @@ jobs:
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.AKS_RESOURCE_GROUP }}
 
-      - name: Give execute permissions for shell script
+      - name: Store secrets with certificates in cluster
         run: |-
-          chmod +x ./setup-certs.sh
+          # apply yml with the secret containing the dotnet-works.com wildcard cert 
+          echo "${{ secrets.DNW_CERT_SECRET }}" | base64 --decode > ./dnw-cert-secret.yml
+          kubectl apply -f ./dnw-cert-secret.yml
+
+          # apply yml with the secret containing the freelancedirekt.nl wildcard cert 
+          echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
+          kubectl apply -f ./fld-cert-secret.yml
 
       - name: Deploy to AKS
-        run: ./setup-certs.sh
+        run: |-
+          chmod +x ./setup-certs.sh
+          ./setup-certs.sh
