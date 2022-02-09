@@ -19,6 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Build and push images to Docker Hub
+        run: |-
+          echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_ID --password-stdin
+          TAG=default-backend:latest
+          docker build -t $TAG -f ./default-backend/Dockerfile  ./default-backend
+          docker push $TAG
+
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -37,7 +44,14 @@ jobs:
           echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
           kubectl apply -f ./fld-cert-secret.yml
 
-      - name: Deploy to DOKS
+      # https://github.com/marketplace/actions/helm-tool-installer
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v2.0
+
+      - name: Deploy to AKS
         run: |-
-          chmod +x ./setup-certs.sh
-          ./setup-certs.sh
+          helm upgrade default-backend ./k8s/helm/default-backend --install
+          helm upgrade cert-issuers ./k8s/helm/cert-issuers --install
+          helm upgrade default-ingress ./k8s/helm/default-ingress --install
+
+          kubectl rollout restart deployment default-backend-deployment
