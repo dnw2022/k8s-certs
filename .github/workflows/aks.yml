@@ -81,4 +81,4 @@ jobs:
           helm upgrade cert-issuers ./k8s/helm/cert-issuers --install
           helm upgrade default-ingress ./k8s/helm/default-ingress --install
 
-          kubectl rollout restart deployment /default-backend-deployment
+          kubectl rollout restart deployment default-backend-deployment
