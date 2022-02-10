@@ -227,22 +227,25 @@ Manually configure container to manage cluster:
 ```
 docker-compose build
 docker-compose run --rm gksdk
+# set env variables in container (copy from create_cluster.sh)
 gcloud auth login
-gcloud config set project kubernetes-339906
-gcloud config set compute/zone europe-central2-a
-gcloud container clusters get-credentials multi-cluster
+gcloud config set project $GC_PROJECT_ID \
+gcloud config set compute/zone $GC_ZONE \
+gcloud container clusters get-credentials $GC_CLUSTERNAME
+docker-compose kill gksdk
+docker-compose down --remove-orphans
 ```
 
 More automated way to configure container to manage cluster:
 
 ```
-docker-compose down --remove-orphans
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm gksdk)
-docker exec $ID /bin/bash /src/configure.sh $GKE_TOKEN $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec $ID /bin/bash /src/configure.sh "$(cat ~/.secrets/gksdk-sa-dnw.json | base64)" $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
 docker exec -it $ID bash
 docker-compose kill gksdk
+docker-compose down --remove-orphans
 ```
 
 # Digital Ocean Kurnetes Service (DOKS) doctl using docker image

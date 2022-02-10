@@ -24,7 +24,7 @@ doctl kubernetes cluster registry add $DO_CLUSTER_NAME
 # This does not seem to work 
 # doctl registry kubernetes-manifest | kubectl apply -f -
 
-# follow the instructions in the README.md file to:
+# Follow the instructions in the README.md file to:
 # (1) install ingress-nginx
 # (2) install cert-manager
 # (3) create cert-manager secret with the Cloudflare token

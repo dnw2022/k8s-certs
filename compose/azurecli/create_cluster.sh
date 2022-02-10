@@ -80,6 +80,12 @@ az aks create \
     --generate-ssh-keys \
     --enable-cluster-autoscaler \
 
+# Follow the instructions in the README.md file to:
+# (1) install ingress-nginx
+# (2) install cert-manager
+# (3) create cert-manager secret with the Cloudflare token
+
+# Cleanup
 # To delete the resource group (and the kubernetes cluster in it)
 # The first time I executed this command nothing seemed to happen
 # Then I removed the --yes and --no-wait options and that seemed to work fine
