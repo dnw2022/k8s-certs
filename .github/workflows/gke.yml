@@ -1,6 +1,7 @@
 name: Deploy to Google Kubernetes Engine (GKE)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
