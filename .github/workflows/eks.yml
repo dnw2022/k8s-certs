@@ -1,0 +1,70 @@
+name: Deploy to Google Kubernetes Engine (GKE)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  DOCKER_ID: dnw2022
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_HUB_TOKEN }}
+  EKS_CLUSTER: cluster-dnw-eks
+  EKS_ACCESS_KEY: ${{ secrets.EKS_ACCESS_KEY }}
+  EKS_ACCESS_KEY_SECRET: ${{ secrets.EKS_ACCESS_KEY_SECRET }}
+  EKS_REGION: eu-central-1
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.EKS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ env.EKS_ACCESS_KEY_SECRET }}
+          aws-region: ${{ env.EKS_REGION }}
+
+      - name: Install and configure kubectl and eksctl
+        run: |-
+          curl -fsSL -o kubectl "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/x64/kubectl"
+          chmod +x kubectl
+          mv ./kubectl /usr/local/bin
+
+          curl -fsSL -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_linux_x64.tar.gz"
+          RUN tar x -f eksctl.tar.gz
+          chmod +x eksctl
+          mv ./eksctl /usr/local/bin
+
+          eksctl utils write-kubeconfig --region "${{ env.EKS_REGION }}" --cluster "${{ env.EKS_CLUSTER }}"
+
+      - name: Build and push images to Docker Hub
+        run: |-
+          echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_ID --password-stdin
+          TAG=dnw2022/default-backend:latest
+          docker build -t $TAG -f ./default-backend/Dockerfile  ./default-backend
+          docker push $TAG
+
+      - name: Store secrets with certificates in cluster
+        run: |-
+          # apply yml with the secret containing the dotnet-works.com wildcard cert 
+          echo "${{ secrets.DNW_CERT_SECRET }}" | base64 --decode > ./dnw-cert-secret.yml
+          kubectl apply -f ./dnw-cert-secret.yml
+
+          # apply yml with the secret containing the freelancedirekt.nl wildcard cert 
+          echo "${{ secrets.FLD_CERT_SECRET }}" | base64 --decode > ./fld-cert-secret.yml
+          kubectl apply -f ./fld-cert-secret.yml
+
+      # https://github.com/marketplace/actions/helm-tool-installer
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v2.0
+
+      - name: Deploy to GKE
+        run: |-
+          helm upgrade default-backend ./k8s/helm/default-backend --install
+          helm upgrade cert-issuers ./k8s/helm/cert-issuers --install
+          helm upgrade default-ingress ./k8s/helm/default-ingress --install
+
+          kubectl rollout restart deployment default-backend-deployment

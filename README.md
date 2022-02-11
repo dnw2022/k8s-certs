@@ -292,6 +292,42 @@ az login
 az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERNAME
 ``` 
 
+# Amazon Elastic Container Service (EKS) eksctl using docker image
+
+https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html
+
+To create a new cluster see compose/eksctl/create-cluster.sh file   
+
+For configuring the cli (including authentication):
+
+https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
+
+Manually configure container to manage cluster:
+
+```
+docker-compose build
+docker-compose run --rm eksctl
+# set env variables in container (copy from create_cluster.sh)
+aws configure set region eu-central-1
+aws configure set aws_access_key_id $EKS_ACCESS_KEY
+aws configure set aws_secret_access_key $EKS_ACCESS_KEY_SECRET
+aws configure set output json
+docker-compose kill eksctl
+docker-compose down --remove-orphans
+```
+
+More automated way to configure container to manage cluster:
+
+```
+docker-compose build
+source ~/.secrets/.all
+ID=$(docker-compose run -d --rm eksctl)
+docker exec $ID /bin/bash /src/configure.sh $EKS_ACCESS_KEY $EKS_ACCESS_KEY_SECRET
+docker exec -it $ID bash
+docker-compose kill eksctl
+docker-compose down --remove-orphans
+```
+
 # Switching between GKE, DOKS and AKS
 
 Just point to the DOKS, GKE or AKS load balancer in the Cloudflare portal under DNS entries or temporarily update your /etc/hosts file.

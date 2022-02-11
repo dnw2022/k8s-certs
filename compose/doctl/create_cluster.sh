@@ -32,3 +32,4 @@ doctl kubernetes cluster registry add $DO_CLUSTER_NAME
 # Cleanup
 # doctl kubernetes cluster registry remove $DO_CLUSTER_NAME
 # doctl registry delete
+# doctl kubernetes cluster delete $DO_CLUSTER_NAME
