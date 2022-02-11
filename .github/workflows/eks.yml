@@ -29,11 +29,11 @@ jobs:
 
       - name: Install and configure kubectl and eksctl
         run: |-
-          curl -fsSL -o kubectl "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/x64/kubectl"
+          curl -fsSL -o kubectl "https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl"
           chmod +x kubectl
           mv ./kubectl /usr/local/bin
 
-          curl -fsSL -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_linux_x64.tar.gz"
+          curl -fsSL -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_linux_amd64.tar.gz"
           RUN tar x -f eksctl.tar.gz
           chmod +x eksctl
           mv ./eksctl /usr/local/bin
