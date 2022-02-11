@@ -34,7 +34,7 @@ jobs:
           mv ./kubectl /usr/local/bin
 
           curl -fsSL -o eksctl.tar.gz "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_linux_amd64.tar.gz"
-          RUN tar x -f eksctl.tar.gz
+          tar x -f eksctl.tar.gz
           chmod +x eksctl
           mv ./eksctl /usr/local/bin
 
