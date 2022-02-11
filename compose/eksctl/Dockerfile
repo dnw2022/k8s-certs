@@ -29,6 +29,6 @@ RUN apt-get install bash-completion
 RUN echo 'source /usr/share/bash-completion/bash_completion' >>~/.bashrc source /usr/share/bash-completion/bash_completion
 RUN echo 'source <(kubectl completion bash)' >> ~/.bashrc
 RUN echo 'alias k=kubectl' >> ~/.bashrc
-RUN echo 'complete -F __start_kubectl k' >> ~/.bashrcaws
+RUN echo 'complete -F __start_kubectl k' >> ~/.bashrc
 
 RUN echo '. <(eksctl completion bash)' >> ~/.bashrc
