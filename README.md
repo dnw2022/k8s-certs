@@ -221,11 +221,42 @@ To point test.freelancedirekt.nl to the cluster:
 | ------| -----| -------------------| ------------  | -
 | A     | test | {LoadBalancer IP}  | DNS only      | Auto
 
+# Local secrets
+
+Setting up docker containers for interacting with the k8s clusters of the different Cloud Providers requires handling many secrets.  
+
+If you are on a Mac you can use keychain to store the secrets and expose the secrets as environment variables only when needed.  
+
+Assuming you have all your secrets stored in a file named .secrets/.all in your home folder use the following command to a the content of the file as a base64 encoded string as a keychain generic password names cli_keys:  
+
+```
+security add-generic-password -s 'cli_keys'  -a '$(id -un)' -w $(cat ~/.secrets/.all | base64) -T "" -U
+```
+
+To delete the generic password:
+
+```
+security delete-generic-password -s 'cli_keys'  -a '$(id -un)'
+```
+
+And to get the base64 encoded content:
+
+```
+security find-generic-password -w -s 'cli_keys' -a '$(id -un)'
+CLI_SECRETS=$(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
+echo $CLI_SECRETS > tmp.env && source tmp.env && rm tmp.env
+
+or in one line:
+
+cat <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
+```
+
 # GKE sdk using docker image
 
 Manually configure container to manage cluster:
 
 ```
+cd ./compose/gksdk
 docker-compose build
 docker-compose run --rm gksdk
 # set env variables in container (copy from create_cluster.sh)
@@ -233,32 +264,30 @@ gcloud auth login
 gcloud config set project $GC_PROJECT_ID \
 gcloud config set compute/zone $GC_ZONE \
 gcloud container clusters get-credentials $GC_CLUSTERNAME
-docker-compose kill gksdk
-docker-compose down --remove-orphans
+docker-compose kill gksdk && docker-compose down --remove-orphans
 ```
 
 More automated way to configure container to manage cluster:
 
 ```
 docker-compose build
-source ~/.secrets/.all
+source <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
 ID=$(docker-compose run -d --rm gksdk)
-docker exec $ID /bin/bash /src/configure.sh "$(cat ~/.secrets/gksdk-sa-dnw.json | base64)" $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
+docker exec $ID /bin/bash /src/configure.sh $GKE_CREDENTIALS_JSON $GKE_PROJECT_ID $GKE_ZONE $GKE_CLUSTER_NAME
 docker exec -it $ID bash
-docker-compose kill gksdk
-docker-compose down --remove-orphans
+docker-compose kill gksdk && docker-compose down --remove-orphans
 ```
 
 # Digital Ocean Kurnetes Service (DOKS) doctl using docker image
 
 ```
-docker-compose down --remove-orphans
+cd ./compose/doctl
 docker-compose build
-source ~/.secrets/.all
+source <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
 ID=$(docker-compose run -d --rm doctl)
 docker exec $ID /bin/bash /src/configure.sh $DO_ACCESS_TOKEN $DO_CLUSTER_NAME
 docker exec -it $ID bash
-docker-compose kill doctl
+docker-compose kill doctl && docker-compose down --remove-orphans
 ```
 
 (doctl is the service in the docker-compose file!)  
@@ -274,13 +303,12 @@ To create a new cluster see compose/azurecli/create-cluster.sh file
 
 ```
 cd ./compose/azurecli
-docker-compose down --remove-orphans
 docker-compose build
-source ~/.secrets/.all
+source <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
 ID=$(docker-compose run -d --rm azurecli)
 docker exec $ID /bin/bash /src/configure.sh $AKS_RESOURCE_GROUP $AKS_CLUSTERNAME $AKS_APP_ID $AKS_PASSWORD $AKS_TENANT_ID
 docker exec -it $ID bash
-docker-compose kill azurecli
+docker-compose kill azurecli && docker-compose down --remove-orphans
 
 Manual setup in the container (after docker exec -it $ID bash above):
 
@@ -306,6 +334,7 @@ https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 Manually configure container to manage cluster:
 
 ```
+cd ./compose/azurecli
 docker-compose build
 docker-compose run --rm eksctl
 # set env variables in container (copy from create_cluster.sh)
@@ -313,25 +342,23 @@ aws configure set region eu-central-1
 aws configure set aws_access_key_id $EKS_ACCESS_KEY
 aws configure set aws_secret_access_key $EKS_ACCESS_KEY_SECRET
 aws configure set output json
-docker-compose kill eksctl
-docker-compose down --remove-orphans
+docker-compose kill eksctl && docker-compose down --remove-orphans
 ```
 
 More automated way to configure container to manage cluster:
 
 ```
 docker-compose build
-source ~/.secrets/.all
+source <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
 ID=$(docker-compose run -d --rm eksctl)
 docker exec $ID /bin/bash /src/configure.sh $EKS_CLUSTERNAME $EKS_REGION $EKS_ACCESS_KEY $EKS_ACCESS_KEY_SECRET
 docker exec -it $ID bash
-docker-compose kill eksctl
-docker-compose down --remove-orphans
+docker-compose kill eksctl && docker-compose down --remove-orphans
 ```
 
-# Switching between GKE, DOKS and AKS
+# Switching between GKE, DOKS, AKS and EKS
 
-Just point to the DOKS, GKE or AKS load balancer in the Cloudflare portal under DNS entries or temporarily update your /etc/hosts file.
+Just point to Cloud Provider load balancer in the Cloudflare portal under DNS entries or temporarily update your /etc/hosts file.
 
 # LoadBalancer public ip
 
