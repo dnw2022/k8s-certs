@@ -1,4 +1,4 @@
-name: Deploy to Google Kubernetes Engine (GKE)
+name: Deploy to Amazon Elastic Kubernetes Service (EKS)
 
 on:
   workflow_dispatch:
