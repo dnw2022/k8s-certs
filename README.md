@@ -42,6 +42,7 @@ chmod 700 get_helm.sh
 ```
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx  
 helm install my-release ingress-nginx/ingress-nginx  
+helm install my-release ingress-nginx/ingress-nginx --tls --debug
 ```
 
 # Cert-manager installation using help
@@ -322,7 +323,7 @@ More automated way to configure container to manage cluster:
 docker-compose build
 source ~/.secrets/.all
 ID=$(docker-compose run -d --rm eksctl)
-docker exec $ID /bin/bash /src/configure.sh $EKS_ACCESS_KEY $EKS_ACCESS_KEY_SECRET
+docker exec $ID /bin/bash /src/configure.sh $EKS_CLUSTERNAME $EKS_REGION $EKS_ACCESS_KEY $EKS_ACCESS_KEY_SECRET
 docker exec -it $ID bash
 docker-compose kill eksctl
 docker-compose down --remove-orphans
