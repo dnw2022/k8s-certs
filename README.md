@@ -8,6 +8,12 @@ git remote add origin https://{username}@github.com/dnw2022/k8s-certs.git
 
 # Building, running and pushing default-backend locally
 
+Install kind: https://kind.sigs.k8s.io/docs/user/quick-start#installation
+
+```
+brew install kind
+```
+
 ```
 docker build -f Dockerfile.dev -t dnw2022/default-backend .
 docker run -p 8000:5000 dnw2022/default-backend
