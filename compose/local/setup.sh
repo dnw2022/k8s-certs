@@ -11,9 +11,12 @@ kind delete cluster --name kind 2>/dev/null
 . ./kind_create_cluster_with_registry.sh
 
 # Pull necessary images and store on the cluster node
+
+# 1. ingress-nginx
 docker pull k8s.gcr.io/ingress-nginx/controller:v1.1.1
 kind load docker-image k8s.gcr.io/ingress-nginx/controller:v1.1.1
 
+# 2. cert-manager
 docker pull quay.io/jetstack/cert-manager-cainjector:v1.7.1
 kind load docker-image quay.io/jetstack/cert-manager-cainjector:v1.7.1
 

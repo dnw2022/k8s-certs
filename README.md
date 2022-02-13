@@ -586,3 +586,71 @@ helm install aspnetapp ./helm \
   --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
   --dry-run --debug
 ```
+
+# Istio
+
+https://github.com/istio/istio/issues/21094
+https://github.com/nowandme/k8s-istio-m1
+
+https://github.com/querycap/istio
+https://github.com/querycap/istio/discussions/75
+
+Install istioctl:
+
+```
+cd
+curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.12.3 sh -
+export PATH="$PATH:/Users/jbijlsma/istio-1.12.3/bin"
+
+istioctl x precheck
+```
+
+Install demo application into cluster:
+
+```
+#istioctl operator init --hub=docker.io/querycapistio --tag=1.12.3 (not needed)
+
+istioctl install --set hub=docker.io/querycapistio --set profile=demo -y
+
+kubectl patch deployments.apps \
+  istio-ingressgateway \
+  --namespace istio-system \
+  --type='json' \
+  -p='[
+  {"op": "replace", "path": "/spec/template/spec/affinity/nodeAffinity/preferredDuringSchedulingIgnoredDuringExecution/0/preference/matchExpressions/0/values", "value": [amd64,arm64]},
+  {"op": "replace", "path": "/spec/template/spec/affinity/nodeAffinity/requiredDuringSchedulingIgnoredDuringExecution/nodeSelectorTerms/0/matchExpressions/0/values", "value": [amd64,arm64,ppc64le,s390x]}
+  ]'
+
+kubectl patch deployments.apps \
+  istio-egressgateway \
+  --namespace istio-system \
+  --type='json' \
+  -p='[
+  {"op": "replace", "path": "/spec/template/spec/affinity/nodeAffinity/preferredDuringSchedulingIgnoredDuringExecution/0/preference/matchExpressions/0/values", "value": [amd64,arm64]},
+  {"op": "replace", "path": "/spec/template/spec/affinity/nodeAffinity/requiredDuringSchedulingIgnoredDuringExecution/nodeSelectorTerms/0/matchExpressions/0/values", "value": [amd64,arm64,ppc64le,s390x]}
+  ]'
+
+k label namespace default istio-injection=enabled
+
+k apply -f ~/istio-1.12.3/samples/bookinfo/platform/kube/bookinfo.yaml
+
+k apply -f ~/istio-1.12.3/samples/bookinfo/networking/bookinfo-gateway.yaml
+
+k apply -f ~/istio-1.12.3/samples/addons
+k rollout status deployment/kiali -n istio-system
+
+istioctl dashboard kiali
+```
+
+What also worked was:
+
+(1) Install istioctl version 1.12.3
+(2) run setup.sh in the k8s-istio-m1 folder
+(3) k apply -f ~/istio-1.12.3/samples/bookinfo/platform/kube/bookinfo.yaml
+(4) k apply -f ~/istio-1.12.3/samples/bookinfo/networking/bookinfo-gateway.yaml
+(5) curl http://localhost/productpage
+
+# Replacing ingress-nginx with Istio Gateways
+
+https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
+

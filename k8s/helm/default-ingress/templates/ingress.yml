@@ -7,6 +7,8 @@ kind: Ingress
 metadata:
   name: default-{{ $domainNameWithoutDots }}-ingress
   annotations:
+    # https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
+    # Should be psosible to just replace this one with an IngressClass for the istio gateway
     kubernetes.io/ingress.class: 'nginx'
     nginx.ingress.kubernetes.io/use-regex: 'true'
     # Rewrite url to always go to /
@@ -19,10 +21,18 @@ metadata:
     cert-manager.io/cluster-issuer: '{{ $.Values.CertIssuer }}'
     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 spec:
+  # https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
+  # for the istio gateway:
+  # ingressClassName: istio
   tls:
   - hosts:
     - '*.{{ $domainName }}'
     - '{{ $domainName }}'
+    # For the istio gateway to use this the secret
+    # it must be in the same namespace as the istio-ingress-gateway (normally istio-system)
+    # Cert-manager can still be used to get and renew certificates 
+    # But note that the certificates themselves need to be created in the namespace of the 
+    # istio-ingress-gateway as well. See: https://istio.io/latest/docs/ops/integrations/certmanager/ 
     secretName: {{ $domainNameWithoutDots }}-wildcard-tls
   rules:
     - host: '*.{{ $domainName }}'
