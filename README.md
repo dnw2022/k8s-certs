@@ -440,6 +440,57 @@ kubectl delete certificate xxx-wildcard-tls
 
 Its good practice to keep the issued certificates somewhere safe, since you cannot re-issue them easily. The old certificates will remain valid unless revoked.
 
+https://blog.kubovy.eu/2020/05/16/retrieve-tls-certificates-from-kubernetes/
+
+# Manual certificate creation (without cert-manager)
+
+https://eff-certbot.readthedocs.io/en/stable/install.html  
+
+Note that its possible to use the manual (interactive) mode or automated one.  
+
+For the automated mode:
+
+```
+docker-compose build
+source <(security find-generic-password -w -s 'cli_keys' -a '$(id -un)' | base64 --decode)
+ID=$(docker-compose run -d --rm certbot)
+docker exec $ID sh /src/cert_init.sh $CLOUDFLARE_TOKEN
+docker exec -it $ID sh
+
+certbot certonly \
+  --non-interactive \
+  --agree-tos \
+  --preferred-challenges dns \
+  --test-cert \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials ./cloudflare.ini \
+  -m jeroen_bijlsma@yahoo.com \
+  -d testing.freelancedirekt.nl
+
+# For wildcard domains escape *  
+#-d \*.your-domain.com
+
+# to see details (such as issuer)
+openssl x509 -in /etc/letsencrypt/live/testing.freelancedirekt.nl/fullchain.pem -text
+```
+
+The manual mode:
+
+```
+certbot certonly \
+  --manual \
+  --preferred-challenges dns \
+  --debug-challenges \
+  --test-cert \
+  --dry-run \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials ./cloudflare.ini \
+  -m jeroen_bijlsma@yahoo.com \
+  -d \*.your-domain.com
+
+docker kill $ID
+```
+
 # Deploying certificates
 
 The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created.  
