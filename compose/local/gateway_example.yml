@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: mygateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default ingress gateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: dotnet-works-com-wildcard-tls # must be the same as secret
+    hosts:
+    - '*.dotnet-works.com'
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "*.dotnet-works.com"
+  gateways:
+  - mygateway
+  http:
+  - match:
+      - uri:
+          regex: /?(.*)
+    # - uri:
+    #     prefix: /headers
+    # - uri:
+    #     prefix: /status
+    # - uri:
+    #     prefix: /delay
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: default-backend-service

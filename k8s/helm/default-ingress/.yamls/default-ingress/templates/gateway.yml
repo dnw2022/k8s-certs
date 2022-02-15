@@ -1,0 +1,82 @@
+---
+# Source: default-ingress/templates/gateway.yml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: default-dotnet-works-com-istio-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: dotnet-works-com-wildcard-tls # must be the same as secret
+    hosts:
+    - '*.dotnet-works.com'
+---
+# Source: default-ingress/templates/gateway.yml
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: default-freelancedirekt-nl-istio-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: freelancedirekt-nl-wildcard-tls # must be the same as secret
+    hosts:
+    - '*.freelancedirekt.nl'
+---
+# Source: default-ingress/templates/gateway.yml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mygateway-virtualservice
+spec:
+  hosts:
+  - '*.dotnet-works.com'
+  gateways:
+  - default-dotnet-works-com-istio-gateway
+  http:
+  - match:
+    - uri:
+        regex: /?(.*)
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: default-backend-service
+---
+# Source: default-ingress/templates/gateway.yml
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mygateway-virtualservice
+spec:
+  hosts:
+  - '*.freelancedirekt.nl'
+  gateways:
+  - default-freelancedirekt-nl-istio-gateway
+  http:
+  - match:
+    - uri:
+        regex: /?(.*)
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 5000
+        host: default-backend-service

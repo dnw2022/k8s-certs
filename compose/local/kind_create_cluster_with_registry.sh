@@ -25,14 +25,18 @@ nodes:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
   extraPortMappings:
-  - containerPort: 32159
-    hostPort: 80
-    listenAddress: "0.0.0.0"
-    protocol: TCP
-  - containerPort: 32739
-    hostPort: 443
-    listenAddress: "0.0.0.0"
-    protocol: TCP
+    - containerPort: 30000
+      hostPort: 80
+      listenAddress: "0.0.0.0"
+      protocol: TCP
+    - containerPort: 30001
+      hostPort: 443
+      listenAddress: "0.0.0.0"
+      protocol: TCP
+    - containerPort: 30002
+      hostPort: 15021
+      listenAddress: "0.0.0.0"
+      protocol: TCP
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]

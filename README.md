@@ -8,16 +8,14 @@ git remote add origin https://{username}@github.com/dnw2022/k8s-certs.git
 
 # Building, running and pushing default-backend locally
 
-Install kind: https://kind.sigs.k8s.io/docs/user/quick-start#installation
+Install Kubernetes in Docker (KinD): https://kind.sigs.k8s.io/docs/user/quick-start#installation
 
 ```
 brew install kind
 ```
 
-```
-docker build -f Dockerfile.dev -t dnw2022/default-backend .
-docker run -p 8000:5000 dnw2022/default-backend
-```
+The compose/local folder contains a script (setup.sh) to re(create) a local KinD cluster with everything. The script assumes 2 k8s secrets containing the wildcard certs (stored as passwords in apple keychain). It is possible to let cert-manager request these certificates, but 
+the you need to create a secret for the Cloudflare token (see instructions below).
 
 # Viewing kubernetes object yaml
 
@@ -652,9 +650,9 @@ What also worked was:
 (4) k apply -f ~/istio-1.12.3/samples/bookinfo/networking/bookinfo-gateway.yaml
 (5) curl http://localhost/productpage
 
-# Replacing ingress-nginx with Istio Gateways
+# Replacing ingress-nginx with an istio gateway
 
 https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
-
-k get IngressClass nginx -o yaml 
+https://discuss.istio.io/t/problem-configuring-ingress-gateway-with-tls-and-wildcard-hosts/6105
+https://istio.io/latest/docs/tasks/traffic-management/ingress/secure-ingress/
 

@@ -1,3 +1,4 @@
+{{- if .Values.IngressEnabled -}}
 {{- range $domainName := $.Values.Domains }}
 {{- $domainNameWithoutDots := regexReplaceAll "\\." $domainName "-" -}}
 {{- $testDomainName := print "test." $domainName -}}
@@ -79,4 +80,5 @@ spec:
                 port:
                   number: {{ $.Values.BackendPort }}
 ---
+{{- end }}
 {{- end }}

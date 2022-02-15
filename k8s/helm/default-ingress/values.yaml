@@ -1,10 +1,12 @@
 CertIssuer: 'letsencrypt-prod'
 BackendService: 'default-backend-service'
 BackendPort: 5000
+IngressEnabled: false
+IstioGatewayEnabled: true
 IstioGatewayName: istio-gateway
 # IngressClassName is the name of the IngressClass object that should be used to control incoming traffic. istio-gateway is the default, but nginx is also possible (k get IngressClass nginx -o yaml for the name)
-IngressClassName: nginx
-IngressNamespace: default
+IngressClassName: istio-gateway
+IngressNamespace: istio-system
 Domains:
   - dotnet-works.com
   - freelancedirekt.nl 
