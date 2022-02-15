@@ -1,4 +1,7 @@
-#!/bin/zsh
+#!/bin/bash
+
+# https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # The uses preview arm64 docker hub images from docker.io/querycapistio 
 # The latest version available now (Feb 13, 2022) is 1.12.3
@@ -53,14 +56,14 @@ docker pull jimmidyson/configmap-reload:v0.5.0
 kind load docker-image jimmidyson/configmap-reload:v0.5.0
 
 # Install istio
-istioctl install -f ./install_istio.yml -y
+istioctl install -f "$SCRIPT_DIR/install_istio.yml" -y
 
 # Label default namespace
 kubectl label namespace default istio-injection=enabled --overwrite
 
 # Install example
-kubectl apply -f ~/istio-1.12.3/samples/bookinfo/platform/kube/bookinfo.yaml
-kubectl apply -f ~/istio-1.12.3/samples/bookinfo/networking/bookinfo-gateway.yaml
+#kubectl apply -f ~/istio-1.12.3/samples/bookinfo/platform/kube/bookinfo.yaml
+#kubectl apply -f ~/istio-1.12.3/samples/bookinfo/networking/bookinfo-gateway.yaml
 
 # Install istio add-ons
 kubectl apply -f ~/istio-1.12.3/samples/addons

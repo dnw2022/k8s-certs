@@ -572,7 +572,9 @@ building images seems to work, but trying to tag and push them gives errors that
 
 Note that when you already installed objects in the k8s cluster using kubectl apply, you will need to delete those resources first (imperatively) before the helm install command works.  
 
-Some useful helm commands:
+Refer to the different charts NOTES.txt files for useful command to test the helm templates.  
+
+Some examples of useful helm commands:
 
 ```
 helm template './helm' \
@@ -653,4 +655,6 @@ What also worked was:
 # Replacing ingress-nginx with Istio Gateways
 
 https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
+
+k get IngressClass nginx -o yaml 
 

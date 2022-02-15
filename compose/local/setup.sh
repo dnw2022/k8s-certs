@@ -1,11 +1,11 @@
-#!/bin/zsh
+#!/bin/bash
+
+# Delete current kind cluster and ignore errors if it doesn't exist
+kind delete cluster --name kind 2>/dev/null
 
 # Ask for keychain password for certificate secrets early on
 DNW_CERT_SECRET=$(security find-generic-password -w -s 'secret_dotnetworks_com_wildcard' -a '$(id -un)' | base64 --decode)
 FLD_CERT_SECRET=$(security find-generic-password -w -s 'secret_freelancedirekt_nl_wildcard' -a '$(id -un)' | base64 --decode)
-
-# Delete current kind cluster and ignore errors if it doesn't exist
-kind delete cluster --name kind 2>/dev/null
 
 # Create the new cluster with a private container / image registry
 . ./kind_create_cluster_with_registry.sh
@@ -37,8 +37,22 @@ kubectl wait --namespace ingress-nginx \
   --selector=app.kubernetes.io/component=controller \
   --timeout=90s
 
+# Setup istio
+. ./istio/setup.sh
+
 # Install cert-manager in cluster
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.yaml
+# https://artifacthub.io/packages/helm/cert-manager/cert-manager
+# Install with helm and override clusterResourceNamespace so the istio-system namespace is used for storing certs and secrets
+# kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.7.1/cert-manager.yaml
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.7.1 \
+  --set installCRDs=true
+  #--set clusterResourceNamespace=istio-system (might not be useful)
 
 sleep 10
 
@@ -53,8 +67,12 @@ docker build -t $TAG -f ../../default-backend/Dockerfile  ../../default-backend
 docker push $TAG
 
 # Store certificate secrets
-kubectl apply -f <(echo $DNW_CERT_SECRET)
-kubectl apply -f <(echo $FLD_CERT_SECRET)
+# If using cert-manager in combination with the istio gateway (instead of ingress-nginx) the secrets
+# for the certificates need to be in the namespace where the istio gateway is running
+echo "Storing DNW cert secret"
+kubectl apply -f <(echo "$DNW_CERT_SECRET") --namespace=default
+echo "Storing FLD cert secret"
+kubectl apply -f <(echo "$FLD_CERT_SECRET") --namespace=default
 
 # Install app specific objects in cluster
 helm upgrade default-backend ../../k8s/helm/default-backend --install
