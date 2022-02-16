@@ -4,6 +4,8 @@ INGRESS=istio
 PRELOAD_IMAGES=true
 STORE_CERT_SECRETS=true
 CERT_SECRETS_NAMESPACE=istio-system
+HTTP_CONTAINER_PORT=30000
+HTTPS_CONTAINER_PORT=30001
 
 while [[ "$#" -gt 0 ]]
   do
@@ -14,6 +16,8 @@ while [[ "$#" -gt 0 ]]
         if [ $INGRESS != "istio" ]
         then
           CERT_SECRETS_NAMESPACE=default
+          HTTP_CONTAINER_PORT=80
+          HTTPS_CONTAINER_PORT=443
         fi
         ;;
       -p|--preloadImages)
@@ -40,7 +44,7 @@ fi
 
 # Create the new cluster with a private container / image registry
 echo "Create new KinD cluster"
-. ./kind_create_cluster_with_registry.sh
+. ./kind_create_cluster_with_registry.sh $HTTP_CONTAINER_PORT $HTTPS_CONTAINER_PORT
 
 if [ $INGRESS = "istio" ]
 then
@@ -137,7 +141,8 @@ else
   echo "Configure ingress-nginx controller in cluster"
   helm upgrade default-ingress ../../k8s/helm/default-ingress \
     --set IngressEnabled=true \
-    --set IstioEnabled=false \
+    --set IngressNamespace=default \
+    --set IstioGatewayEnabled=false \
     --install
 fi
 

@@ -1,53 +1,13 @@
 ---
 # Source: default-ingress/templates/gateway.yml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: default-dotnet-works-com-ingress
-  namespace: 'istio-system'
-  annotations:
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
-spec:
-  # https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
-  # ingressClassName: 'istio-gateway'
-  tls:
-  - hosts:
-    - '*.dotnet-works.com'
-    - 'dotnet-works.com'
-    # For the istio gateway to use this the secret
-    # it must be in the same namespace as the istio-ingress-gateway (normally istio-system)
-    # Cert-manager can still be used to get and renew certificates 
-    # But note that the certificates themselves need to be created in the namespace of the 
-    # istio-ingress-gateway as well. See: https://istio.io/latest/docs/ops/integrations/certmanager/ 
-    secretName: dotnet-works-com-wildcard-tls
----
-# Source: default-ingress/templates/gateway.yml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: default-freelancedirekt-nl-ingress
-  namespace: 'istio-system'
-  annotations:
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
-spec:
-  # https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
-  # ingressClassName: 'istio-gateway'
-  tls:
-  - hosts:
-    - '*.freelancedirekt.nl'
-    - 'freelancedirekt.nl'
-    # For the istio gateway to use this the secret
-    # it must be in the same namespace as the istio-ingress-gateway (normally istio-system)
-    # Cert-manager can still be used to get and renew certificates 
-    # But note that the certificates themselves need to be created in the namespace of the 
-    # istio-ingress-gateway as well. See: https://istio.io/latest/docs/ops/integrations/certmanager/ 
-    secretName: freelancedirekt-nl-wildcard-tls
----
-# Source: default-ingress/templates/gateway.yml
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: default-dotnet-works-com-istio-gateway
+  annotations:
+    # https://cert-manager.io/docs/usage/gateway/
+    # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -67,6 +27,10 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: default-freelancedirekt-nl-istio-gateway
+  annotations:
+    # https://cert-manager.io/docs/usage/gateway/
+    # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
 spec:
   selector:
     istio: ingressgateway # use istio default controller

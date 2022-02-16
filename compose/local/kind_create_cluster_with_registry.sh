@@ -1,5 +1,11 @@
 #!/bin/zsh
 
+HTTP_CONTAINER_PORT=$1
+echo "HTTP_CONTAINER_PORT=${HTTP_CONTAINER_PORT}"
+
+HTTPS_CONTAINER_PORT=$2
+echo "HTTPS_CONTAINER_PORT=${HTTPS_CONTAINER_PORT}"
+
 set -o errexit
 # https://kind.sigs.k8s.io/docs/user/local-registry/
 
@@ -25,11 +31,11 @@ nodes:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
   extraPortMappings:
-    - containerPort: 30000
+    - containerPort: ${HTTP_CONTAINER_PORT}
       hostPort: 80
       listenAddress: "0.0.0.0"
       protocol: TCP
-    - containerPort: 30001
+    - containerPort: ${HTTPS_CONTAINER_PORT}
       hostPort: 443
       listenAddress: "0.0.0.0"
       protocol: TCP

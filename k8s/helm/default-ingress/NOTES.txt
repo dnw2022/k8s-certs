@@ -4,6 +4,8 @@ helm template '.' \
   --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
   --output-dir '.yamls'
 
-helm install default-backend . \
+helm install default-ingress . --dry-run --debug
+
+helm install default-ingress . \
   --set PrivateContainerRegistry="registry.digitalocean.com/dnw2022/" \
   --dry-run --debug
