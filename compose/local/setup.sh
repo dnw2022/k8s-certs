@@ -86,6 +86,11 @@ then
 fi
 
 echo "Install cert-manager in cluster"
+
+# https://cert-manager.io/docs/usage/gateway/
+# not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+# kubectl kustomize "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v0.3.0" | kubectl apply -f -
+
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 helm install \
@@ -94,6 +99,7 @@ helm install \
   --create-namespace \
   --version v1.7.1 \
   --set installCRDs=true
+  # --set "extraArgs={--feature-gates=ExperimentalGatewayAPISupport=true}"
 
 sleep 10
 

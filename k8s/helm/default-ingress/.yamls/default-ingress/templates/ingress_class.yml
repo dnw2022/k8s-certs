@@ -1,8 +1,0 @@
----
-# Source: default-ingress/templates/ingress_class.yml
-apiVersion: networking.k8s.io/v1beta1
-kind: IngressClass
-metadata:
-  name: 'istio-gateway'
-spec:
-  controller: istio.io/ingress-controller

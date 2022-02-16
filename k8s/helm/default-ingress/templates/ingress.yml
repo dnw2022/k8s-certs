@@ -25,7 +25,7 @@ metadata:
 spec:
   # https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
   # for the istio gateway:
-  ingressClassName: '{{ $.Values.IngressClassName }}'
+  ingressClassName: 'nginx'
   tls:
   - hosts:
     - '*.{{ $domainName }}'

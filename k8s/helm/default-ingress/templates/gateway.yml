@@ -8,6 +8,10 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   name: {{ $gatewayName }}
+  annotations:
+    # https://cert-manager.io/docs/usage/gateway/
+    # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+    cert-manager.io/cluster-issuer: '{{ $.Values.CertIssuer }}'
 spec:
   selector:
     istio: ingressgateway # use istio default controller
