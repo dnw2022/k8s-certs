@@ -47,7 +47,7 @@ spec:
     - destination:
         host: default-backend-service.default.svc.cluster.local
         port:
-          number: 5000
+          number: 5002
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService

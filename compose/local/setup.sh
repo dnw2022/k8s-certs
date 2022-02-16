@@ -129,7 +129,10 @@ fi
 
 # Install app specific objects in cluster
 echo "Install default-backend in cluster"
-helm upgrade default-backend ../../k8s/helm/default-backend --install
+helm upgrade default-backend ../../k8s/helm/default-backend \
+  --set PrivateContainerRegistry="localhost:5001/" \
+  --install
+
 echo "Install cert-issuers in cluster"
 helm upgrade cert-issuers ../../k8s/helm/cert-issuers --install
 

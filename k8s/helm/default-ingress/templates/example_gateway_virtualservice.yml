@@ -1,0 +1,31 @@
+{{- range $domainName := $.Values.Domains }}
+{{- $domainNameWithoutDots := regexReplaceAll "\\." $domainName "-" }}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: example-{{ $domainNameWithoutDots }}-vs
+  namespace: istio-system
+spec:
+  hosts:
+  - "example.{{ $domainName }}"
+  gateways:
+  - {{ $.Values.IstioGatewayName }}
+  http:
+  - match:
+    - uri:
+        regex: /?(.*)
+    rewrite:
+      uri: "/example"
+    route:
+    - destination:
+        host: {{ $.Values.DefaultBackendServiceFqn }}
+        port:
+          number: {{ $.Values.DefaultBackendPort }}
+#   http:
+#   - route:
+#     - destination:
+#         host: {{ $.Values.DefaultBackendServiceFqn }}
+#         port:
+#           number: {{ $.Values.DefaultBackendPort }}
+---
+{{- end }}

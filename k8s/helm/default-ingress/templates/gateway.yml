@@ -1,5 +1,5 @@
 {{- if .Values.IstioGatewayEnabled -}}
-{{- $gatewayName := "test-gateway" -}}
+{{- $gatewayName := $.Values.IstioGatewayName -}}
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:

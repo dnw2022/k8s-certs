@@ -40,5 +40,5 @@ spec:
     route:
     - destination:
         port:
-          number: 5000
+          number: 5002
         host: default-backend-service
