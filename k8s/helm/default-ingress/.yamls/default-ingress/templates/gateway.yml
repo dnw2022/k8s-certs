@@ -1,90 +1,138 @@
 ---
 # Source: default-ingress/templates/gateway.yml
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: default-dotnet-works-com-istio-gateway
-  annotations:
-    # https://cert-manager.io/docs/usage/gateway/
-    # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
-spec:
-  selector:
-    istio: ingressgateway # use istio default controller
-  servers:
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      credentialName: dotnet-works-com-wildcard-tls # must be the same as secret
-    hosts:
-    - '*.dotnet-works.com'
----
-# Source: default-ingress/templates/gateway.yml
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: default-freelancedirekt-nl-istio-gateway
-  annotations:
-    # https://cert-manager.io/docs/usage/gateway/
-    # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
-    cert-manager.io/cluster-issuer: 'letsencrypt-prod'
-spec:
-  selector:
-    istio: ingressgateway # use istio default controller
-  servers:
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      credentialName: freelancedirekt-nl-wildcard-tls # must be the same as secret
-    hosts:
-    - '*.freelancedirekt.nl'
----
-# Source: default-ingress/templates/gateway.yml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: dotnet-works-com-virtualservice
-spec:
-  hosts:
-  - '*.dotnet-works.com'
-  gateways:
-  - default-dotnet-works-com-istio-gateway
-  http:
-  - match:
-    - uri:
-        regex: /?(.*)
-    rewrite:
-      uri: "/"
-    route:
-    - destination:
-        port:
-          number: 5000
-        host: default-backend-service
----
-# Source: default-ingress/templates/gateway.yml
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: freelancedirekt-nl-virtualservice
-spec:
-  hosts:
-  - '*.freelancedirekt.nl'
-  gateways:
-  - default-freelancedirekt-nl-istio-gateway
-  http:
-  - match:
-    - uri:
-        regex: /?(.*)
-    rewrite:
-      uri: "/"
-    route:
-    - destination:
-        port:
-          number: 5000
-        host: default-backend-service
+##
+##### apiVersion: networking.istio.io/v1alpha3
+# kind: Gateway
+# metadata:
+#   name: default-dotnet-works-com-istio-gateway
+#   annotations:
+#     # https://cert-manager.io/docs/usage/gateway/
+#     # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+#     # cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+# spec:
+#   selector:
+#     istio: ingressgateway # use istio default controller
+#   servers:
+#   - port:
+#       number: 443
+#       name: https
+#       protocol: HTTPS
+#     tls:
+#       mode: SIMPLE
+#       credentialName: dotnet-works-com-wildcard-tls # must be the same as secret
+#     hosts:
+#     - '*.dotnet-works.com'
+# ---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: VirtualService
+# metadata:
+#   name: dotnet-works-com-virtualservice
+# spec:
+#   hosts:
+#   - '*.dotnet-works.com'
+#   gateways:
+#   - default-dotnet-works-com-istio-gateway
+#   http:
+#   - match:
+#     - uri:
+#         regex: /?(.*)
+#     rewrite:
+#       uri: "/"
+#     route:
+#     - destination:
+#         port:
+#           number: 5000
+#         host: default-backend-service
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: default-dotnet-works-com-ingress
+#   namespace: 'istio-system'
+#   annotations:
+#     nginx.ingress.kubernetes.io/use-regex: 'true'
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+#     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+# spec:
+#   ingressClassName: 'nginx'
+#   tls:
+#   - hosts:
+#     - '*.dotnet-works.com'
+#     - 'dotnet-works.com'
+#     secretName: dotnet-works-com-wildcard-tls
+#   defaultBackend:
+#     service:
+#       name: default-backend-service
+#       port:
+#         number: 5000
+# ---
+#
+##### apiVersion: networking.istio.io/v1alpha3
+# kind: Gateway
+# metadata:
+#   name: default-freelancedirekt-nl-istio-gateway
+#   annotations:
+#     # https://cert-manager.io/docs/usage/gateway/
+#     # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
+#     # cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+# spec:
+#   selector:
+#     istio: ingressgateway # use istio default controller
+#   servers:
+#   - port:
+#       number: 443
+#       name: https
+#       protocol: HTTPS
+#     tls:
+#       mode: SIMPLE
+#       credentialName: freelancedirekt-nl-wildcard-tls # must be the same as secret
+#     hosts:
+#     - '*.freelancedirekt.nl'
+# ---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: VirtualService
+# metadata:
+#   name: freelancedirekt-nl-virtualservice
+# spec:
+#   hosts:
+#   - '*.freelancedirekt.nl'
+#   gateways:
+#   - default-freelancedirekt-nl-istio-gateway
+#   http:
+#   - match:
+#     - uri:
+#         regex: /?(.*)
+#     rewrite:
+#       uri: "/"
+#     route:
+#     - destination:
+#         port:
+#           number: 5000
+#         host: default-backend-service
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: default-freelancedirekt-nl-ingress
+#   namespace: 'istio-system'
+#   annotations:
+#     nginx.ingress.kubernetes.io/use-regex: 'true'
+#     nginx.ingress.kubernetes.io/rewrite-target: /
+#     cert-manager.io/cluster-issuer: 'letsencrypt-prod'
+#     nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+# spec:
+#   ingressClassName: 'nginx'
+#   tls:
+#   - hosts:
+#     - '*.freelancedirekt.nl'
+#     - 'freelancedirekt.nl'
+#     secretName: freelancedirekt-nl-wildcard-tls
+#   defaultBackend:
+#     service:
+#       name: default-backend-service
+#       port:
+#         number: 5000
+# ---
+#
+#

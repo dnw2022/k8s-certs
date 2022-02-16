@@ -9,4 +9,13 @@ IngressClassName: istio-gateway
 IngressNamespace: istio-system
 Domains:
   - dotnet-works.com
-  - freelancedirekt.nl 
+  - freelancedirekt.nl
+IstioAddOns:
+  - Name: grafana
+    Port: 3000
+  - Name: kiali
+    Port: 20001
+  - Name: tracing
+    Port: 80
+  - Name: prometheus
+    Port: 9090
