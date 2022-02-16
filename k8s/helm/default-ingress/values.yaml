@@ -1,6 +1,7 @@
 CertIssuer: 'letsencrypt-prod'
-BackendService: 'default-backend-service'
-BackendPort: 5000
+DefaultBackendService: 'default-backend-service'
+DefaultBackendServiceFqn: 'default-backend-service.default.svc.cluster.local'
+DefaultBackendPort: 5000
 IngressEnabled: false
 IstioGatewayEnabled: true
 IstioGatewayName: istio-gateway

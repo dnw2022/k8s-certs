@@ -44,9 +44,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ $.Values.BackendService }}
+                name: {{ $.Values.DefaultBackendService }}
                 port:
-                  number: {{ $.Values.BackendPort }}
+                  number: {{ $.Values.DefaultBackendPort }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -76,9 +76,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: {{ $.Values.BackendService }}
+                name: {{ $.Values.DefaultBackendService }}
                 port:
-                  number: {{ $.Values.BackendPort }}
+                  number: {{ $.Values.DefaultBackendPort }}
 ---
 {{- end }}
 {{- end }}

@@ -50,9 +50,9 @@ spec:
     service:
       # we cannot specify here in which namespace the default-backend-service is
       # trying to do so results in an error when installing the helm template
-      name: default-backend-service
+      name: {{ $.Values.DefaultBackendService }}
       port:
-        number: 5000
+        number: {{ $.Values.DefaultBackendPort }}
 ---
 {{- end }}
 apiVersion: networking.istio.io/v1alpha3
@@ -75,9 +75,9 @@ spec:
       uri: "/"
     route:
     - destination:
-        host: 'default-backend-service.default.svc.cluster.local'
+        host: {{ $.Values.DefaultBackendServiceFqn }}
         port:
-          number: 5000
+          number: {{ $.Values.DefaultBackendPort }}
 ---
 {{- range $addOn := $.Values.IstioAddOns }}
 apiVersion: networking.istio.io/v1alpha3
