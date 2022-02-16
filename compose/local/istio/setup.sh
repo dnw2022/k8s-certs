@@ -67,4 +67,4 @@ kubectl label namespace default istio-injection=enabled --overwrite
 
 # Install istio add-ons
 kubectl apply -f ~/istio-1.12.3/samples/addons
-kubectl rollout status deployment/kiali -n istio-system
+#kubectl rollout status deployment/kiali -n istio-system

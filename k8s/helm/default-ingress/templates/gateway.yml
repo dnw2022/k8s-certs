@@ -11,7 +11,7 @@ metadata:
   annotations:
     # https://cert-manager.io/docs/usage/gateway/
     # not working at the moment because istio does not support setting tls.mode to TERMINATE at the moment
-    cert-manager.io/cluster-issuer: '{{ $.Values.CertIssuer }}'
+    # cert-manager.io/cluster-issuer: '{{ $.Values.CertIssuer }}'
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -69,17 +69,6 @@ spec:
       name: {{ $.Values.BackendService }}
       port:
         number: {{ $.Values.BackendPort }}
-  # rules:
-    # - host: '*.{{ $domainName }}'
-    #   http:
-    #     paths:
-    #       - path: /?(.*)
-    #         pathType: Prefix
-    #         backend:
-    #           service:
-    #             name: {{ $.Values.BackendService }}
-    #             port:
-    #               number: {{ $.Values.BackendPort }}
 ---
 {{- end }}
 {{- end }}
