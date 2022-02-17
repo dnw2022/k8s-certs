@@ -44,6 +44,10 @@ nodes:
       hostPort: 15021
       listenAddress: "0.0.0.0"
       protocol: TCP
+    - containerPort: 30080
+      hostPort: 30080
+      listenAddress: "0.0.0.0"
+      protocol: TCP
 containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
