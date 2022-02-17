@@ -1,3 +1,4 @@
+# For mapping extra port ranges: https://github.com/kubernetes-sigs/kind/issues/1789
 #!/bin/zsh
 
 HTTP_CONTAINER_PORT=$1
