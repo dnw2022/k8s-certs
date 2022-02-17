@@ -20,12 +20,12 @@ spec:
       credentialName: {{ $domainNameWithoutDots }}-wildcard-tls
     hosts:
     - "*.{{ $domainName }}"
-  # - port:
-  #     number: 80
-  #     name: http-{{ $domainNameWithoutDots }}
-  #     protocol: HTTP
-  #   hosts:
-  #   - "*.{{ $domainName }}"
+  - port:
+      number: 80
+      name: http-{{ $domainNameWithoutDots }}
+      protocol: HTTP
+    hosts:
+    - "*.{{ $domainName }}"
   {{- end }}
 ---
 {{- range $domainName := $.Values.Domains }}
