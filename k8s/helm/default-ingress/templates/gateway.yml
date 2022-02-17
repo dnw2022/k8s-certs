@@ -77,8 +77,8 @@ spec:
   - match:
     - uri:
         regex: /?(.*)
-    rewrite:
-      uri: "/"
+    # rewrite:
+    #   uri: "/"
     route:
     - destination:
         host: {{ $.Values.DefaultBackendServiceFqn }}
