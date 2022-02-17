@@ -338,7 +338,7 @@ https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 Manually configure container to manage cluster:
 
 ```
-cd ./compose/azurecli
+cd ./compose/eksctl
 docker-compose build
 docker-compose run --rm eksctl
 # set env variables in container (copy from create_cluster.sh)
@@ -656,3 +656,12 @@ https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress
 https://discuss.istio.io/t/problem-configuring-ingress-gateway-with-tls-and-wildcard-hosts/6105
 https://istio.io/latest/docs/tasks/traffic-management/ingress/secure-ingress/
 
+# More issues found
+
+source from virtual file only seems to work in zsh shell
+
+when refering to the istio gateway from a Virtual Service in a different namespace you HAVE to prefix the gatway reference with the namespace of the gateway:
+
+```
+gateway: istio-system/istio-gateway
+```
