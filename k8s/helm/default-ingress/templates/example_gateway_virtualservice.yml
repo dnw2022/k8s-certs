@@ -1,3 +1,4 @@
+{{- if .Values.IstioGatewayEnabled -}}
 {{- range $domainName := $.Values.Domains }}
 {{- $domainNameWithoutDots := regexReplaceAll "\\." $domainName "-" }}
 apiVersion: networking.istio.io/v1alpha3
@@ -28,4 +29,5 @@ spec:
 #         port:
 #           number: {{ $.Values.DefaultBackendPort }}
 ---
+{{- end }}
 {{- end }}
