@@ -38,8 +38,15 @@ kind delete cluster --name kind 2>/dev/null
 if [ $STORE_CERT_SECRETS ]
 then
   echo "Get cert secrets from keychain"
-  DNW_CERT_SECRET=$(security find-generic-password -w -s 'secret_dotnetworks_com_wildcard' -a '$(id -un)' | base64 --decode)
-  FLD_CERT_SECRET=$(security find-generic-password -w -s 'secret_freelancedirekt_nl_wildcard' -a '$(id -un)' | base64 --decode)
+
+  if [[ "$OSTYPE" == "linux-gnu"* ]]
+  then
+    DNW_CERT_SECRET=$(cat ~/.secrets/dnw_cer_secret.yml)
+    FLD_CERT_SECRET=$(cat ~/.secrets/fld_cer_secret.yml)
+  else
+    DNW_CERT_SECRET=$(security find-generic-password -w -s 'secret_dotnetworks_com_wildcard' -a '$(id -un)' | base64 --decode)
+    FLD_CERT_SECRET=$(security find-generic-password -w -s 'secret_freelancedirekt_nl_wildcard' -a '$(id -un)' | base64 --decode)
+  fi
 fi
 
 # Create the new cluster with a private container / image registry
