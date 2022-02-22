@@ -589,6 +589,12 @@ helm install aspnetapp ./helm \
 
 # Istio
 
+Getting everything working on ARM64 / AARCH64 is a bit of a challenge.
+
+For some reason the istio gateway pod does not start correctly (gives an error about node affinity). 
+
+Using kind and pre-loading the istio gateway image (proxyv2:1.13.0 at the time of writing) seems to work though. This is probably a temporary bug.
+
 https://github.com/istio/istio/issues/21094
 https://github.com/nowandme/k8s-istio-m1
 
