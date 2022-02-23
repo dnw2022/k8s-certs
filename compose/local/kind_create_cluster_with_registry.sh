@@ -23,6 +23,12 @@ fi
 cat <<EOF | kind create cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  apiServerAddress: "0.0.0.0"
+  apiServerPort: 6443
+  podSubnet: "10.240.0.0/16"
+  serviceSubnet: "10.0.0.0/16"
+  disableDefaultCNI: true
 nodes:
 - role: control-plane
   kubeadmConfigPatches:

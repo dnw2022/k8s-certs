@@ -53,6 +53,12 @@ fi
 echo "Create new KinD cluster"
 . ./kind_create_cluster_with_registry.sh $HTTP_CONTAINER_PORT $HTTPS_CONTAINER_PORT
 
+# Install calico
+curl https://docs.projectcalico.org/manifests/calico.yaml | kubectl apply -f -
+
+# Scale down CoreDNS
+kubectl scale deployment --replicas 1 coredns --namespace kube-system
+
 if [ $INGRESS = "istio" ]
 then
   echo "Install istio in cluster"
