@@ -2,7 +2,7 @@
 
 # https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-VERSION=1.13.0
+VERSION=1.13.1
 
 # The uses preview arm64 docker hub images from docker.io/querycapistio 
 # The latest version available now (Feb 22, 2022) is 1.13.0
