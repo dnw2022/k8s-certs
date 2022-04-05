@@ -14,7 +14,7 @@ Install Kubernetes in Docker (KinD): https://kind.sigs.k8s.io/docs/user/quick-st
 brew install kind
 ```
 
-The compose/local folder contains a script (setup.sh) to re(create) a local KinD cluster with everything. The script assumes 2 k8s secrets containing the wildcard certs (stored as passwords in apple keychain). It is possible to let cert-manager request these certificates, but 
+The compose/local folder contains a script (setup.sh) to re(create) a local KinD cluster with everything. The script assumes 2 k8s secrets containing the wildcard certs (stored as passwords in apple keychain). It is possible to let cert-manager request these certificates, but
 the you need to create a secret for the Cloudflare token (see instructions below).
 
 # Viewing kubernetes object yaml
@@ -26,9 +26,9 @@ kubectl get deployment {deploymentname} -o yaml
 # GKE deploy with service account in github actions
 
 ```
-DOCKER_HUB_TOKEN = {docker pwd}  
-GKE_PROJECT_ID = multi-k8s-339908  
-GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | base64  
+DOCKER_HUB_TOKEN = {docker pwd}
+GKE_PROJECT_ID = multi-k8s-339908
+GKE_SERVICE_ACCOUNT_KEY_FILE_JSON = cat multi-k8s-339908-e1853ea369e6.json | base64
 ```
 
 # Helm installation
@@ -44,8 +44,8 @@ chmod 700 get_helm.sh
 # Ingress-nginx installation using helm
 
 ```
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx  
-helm install my-release ingress-nginx/ingress-nginx  
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm install my-release ingress-nginx/ingress-nginx
 helm install my-release ingress-nginx/ingress-nginx --tls --debug
 ```
 
@@ -57,31 +57,31 @@ https://cert-manager.io/docs/
 kubectl create namespace cert-manager
 
 helm repo add jetstack https://charts.jetstack.io
-helm repo update 
+helm repo update
 helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --version v1.7.0 \
-  --set installCRDs=true  
+  --set installCRDs=true
 ```
 
 # Cert-manager and Ingress
 
 We have 2 options for issuing certificates:
 
-(1) Use the ingress annotation cert-manager.io/cluster-issuer: 'letsencrypt-prod'. This will use ingress-shim to automatically create 
+(1) Use the ingress annotation cert-manager.io/cluster-issuer: 'letsencrypt-prod'. This will use ingress-shim to automatically create
 Certificate objects  
-(2) Create Certificate objects in our cluster manually and let cert-manager go through the process of issuing them and storing them as secrets in our cluster  
+(2) Create Certificate objects in our cluster manually and let cert-manager go through the process of issuing them and storing them as secrets in our cluster
 
-Useful reading: https://stackoverflow.com/questions/51613842/wildcard-ssl-certificate-with-subdomain-redirect-in-kubernetes  
+Useful reading: https://stackoverflow.com/questions/51613842/wildcard-ssl-certificate-with-subdomain-redirect-in-kubernetes
 
 # Cloudflare tokens
 
 Create Cloudflare API token in their Management portal with these permissions:
 
-| Token name	      | Permissions	                      | Resources	
-| -                 | -                                 | - 
-| {token name}	    | Zone.Zone (Read), Zone.DNS (Edit)	| Include (All zones)
+| Token name   | Permissions                       | Resources           |
+| ------------ | --------------------------------- | ------------------- |
+| {token name} | Zone.Zone (Read), Zone.DNS (Edit) | Include (All zones) |
 
 Make sure to use the correct token type in the issuers (apiTokenSecretRef or apiKeySecretRef):
 
@@ -95,7 +95,7 @@ apiTokenSecretRef:
 kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token={your api token}
 ```
 
-or:  
+or:
 
 ```
 apiKeySecretRef:
@@ -139,12 +139,12 @@ kubectl get certificates
 
 | NAME                            | READY | SECRET                          | AGE |
 ----------------------------------| ----- | ------------------------------- | --- |
-| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
+| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s |
 ```
 
 if there is alreadu a secret for the certificate nothing will be done.
 
-but if you delete the secret:  
+but if you delete the secret:
 
 ```
 kubectl delete secret xxx-wildcard-tls
@@ -155,14 +155,14 @@ kubectl get certificates
 
 | NAME                            | READY | SECRET                          | AGE |
 ----------------------------------| ----- | ------------------------------- | --- |
-| xxx-wildcard-tls                | False | xxx-wildcard-tls                | 5s | 
+| xxx-wildcard-tls                | False | xxx-wildcard-tls                | 5s |
 ```
 
 The whole flow will be initiated:
 
 (1) create CertificateRequest  
 (2) create Order  
-(3) create Challenge  
+(3) create Challenge
 
 If everything is ok kubectl get certificates will show READY (true) again and will show the name of the SECRET:
 
@@ -171,7 +171,7 @@ kubectl get certificates
 
 | NAME                            | READY | SECRET                          | AGE |
 ----------------------------------| ----- | ------------------------------- | --- |
-| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
+| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s |
 ```
 
 Now follow the chain CertificateRequest (cr), Order and Challenge. You might also need to check the logs of the cert-manager pod in the cert-manager namespace:
@@ -183,7 +183,7 @@ NAME                              READY   SECRET                            AGE
 xxx-wildcard-tls                  True    xxx-wildcard-tls                  25h
 
 root@ae8e6b45056d:/app# k describe certificates xxx-wildcard-tls | grep CertificateRequest
-  
+
 Normal  Requested  50s   cert-manager  Created new CertificateRequest resource "xxx-wildcard-tls-sb2h5"
 
 root@ae8e6b45056d:/app# k describe cr xxx-wildcard-tls-sb2h5 | grep Order
@@ -198,14 +198,14 @@ Usually in the order you will see that a Challende was created. You can again de
 Looking at the logs of the cert-manager pod is also useful sometimes:
 
 ```
-root@ae8e6b45056d:/app# k get pods -n cert-manager 
+root@ae8e6b45056d:/app# k get pods -n cert-manager
 
 NAME                                       READY   STATUS    RESTARTS      AGE
 cert-manager-847544bbd-gxj94               1/1     Running   1 (47h ago)   2d
 cert-manager-cainjector-5c747645bf-rrhz9   1/1     Running   5 (47h ago)   2d
 cert-manager-webhook-f588b48b8-6h2vk       1/1     Running   0             2d
 
-root@ae8e6b45056d:/app# k logs cert-manager-847544bbd-gxj94 -n cert-manager --tail=2 
+root@ae8e6b45056d:/app# k logs cert-manager-847544bbd-gxj94 -n cert-manager --tail=2
 
 I0203 08:02:41.669895       Last event
 I0203 08:02:41.670523       Another event
@@ -214,24 +214,24 @@ I0203 08:02:41.670523       Another event
 # Restart a deployment
 
 ```
-kubectl rollout restart deployment/my-release-ingress-nginx-controller  
+kubectl rollout restart deployment/my-release-ingress-nginx-controller
 ```
 
 # Cloudflare configuration
 
-To point test.freelancedirekt.nl to the cluster:  
+To point test.freelancedirekt.nl to the cluster:
 
-| Type  | Name | Content            | Proxy status  | TTL
-| ------| -----| -------------------| ------------  | -
-| A     | test | {LoadBalancer IP}  | DNS only      | Auto
+| Type | Name | Content           | Proxy status | TTL  |
+| ---- | ---- | ----------------- | ------------ | ---- |
+| A    | test | {LoadBalancer IP} | DNS only     | Auto |
 
 # Local secrets
 
-Setting up docker containers for interacting with the k8s clusters of the different Cloud Providers requires handling many secrets.  
+Setting up docker containers for interacting with the k8s clusters of the different Cloud Providers requires handling many secrets.
 
-If you are on a Mac you can use keychain to store the secrets and expose the secrets as environment variables only when needed.  
+If you are on a Mac you can use keychain to store the secrets and expose the secrets as environment variables only when needed.
 
-Assuming you have all your secrets stored in a file named .secrets/.all in your home folder use the following command to a the content of the file as a base64 encoded string as a keychain generic password names cli_keys:  
+Assuming you have all your secrets stored in a file named .secrets/.all in your home folder use the following command to a the content of the file as a base64 encoded string as a keychain generic password names cli_keys:
 
 ```
 security add-generic-password -s 'cli_keys'  -a '$(id -un)' -w $(cat ~/.secrets/.all | base64) -T "" -U
@@ -294,16 +294,16 @@ docker exec -it $ID bash
 docker-compose kill doctl && docker-compose down --remove-orphans
 ```
 
-(doctl is the service in the docker-compose file!)  
+(doctl is the service in the docker-compose file!)
 
-It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)  
+It is also possible to install doctl locally and switch context (between kubernetes on Docker Desktop and DOKS)
 
 # Azure Kurnetes Service (AKS) az cli using docker image
 
 https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough
 https://trstringer.com/cheap-kubernetes-in-azure/
 
-To create a new cluster see compose/azurecli/create-cluster.sh file   
+To create a new cluster see compose/azurecli/create-cluster.sh file
 
 ```
 cd ./compose/azurecli
@@ -323,13 +323,13 @@ az login
 
 # configuring the cluster to use once it was created
 az aks get-credentials --resource-group $AKS_RESOURCE_GROUP --name $AKS_CLUSTERNAME
-``` 
+```
 
 # Amazon Elastic Container Service (EKS) eksctl using docker image
 
 https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html
 
-To create a new cluster see compose/eksctl/create-cluster.sh file   
+To create a new cluster see compose/eksctl/create-cluster.sh file
 
 For configuring the cli (including authentication):
 
@@ -370,41 +370,41 @@ Just point to Cloud Provider load balancer in the Cloudflare portal under DNS en
 k get service
 ```
 
-Find the service of type LoadBalancer and you will find the public IP address in the EXTERNAL-IP column:  
+Find the service of type LoadBalancer and you will find the public IP address in the EXTERNAL-IP column:
 
-| NAME                                    | TYPE            | CLUSTER-IP    | EXTERNAL-IP   | PORT(S)                     | AGE
-| -                                       | -               | -             | -             | -                          | -
-| my-release-ingress-nginx-controller     | LoadBalancer    | 10.0.97.119   | 40.121.242.61 | 80:32663/TCP,443:32442/TCP  | 38m
+| NAME                                | TYPE         | CLUSTER-IP  | EXTERNAL-IP   | PORT(S)                    | AGE |
+| ----------------------------------- | ------------ | ----------- | ------------- | -------------------------- | --- |
+| my-release-ingress-nginx-controller | LoadBalancer | 10.0.97.119 | 40.121.242.61 | 80:32663/TCP,443:32442/TCP | 38m |
 
 # Testing if it works
 
-Either update your /etc/hosts file or add a Cloudflare A record that points to the load balancer public IP.  
+Either update your /etc/hosts file or add a Cloudflare A record that points to the load balancer public IP.
 
-Note that navigating to https://example.dotnet-works.com/ works:  
+Note that navigating to https://example.dotnet-works.com/ works:
 
-Hmmm, it seems you ventured into unknown territory :(  
+Hmmm, it seems you ventured into unknown territory :(
 
-But https://example.dotnet-works.com/aass gives:  
+But https://example.dotnet-works.com/aass gives:
 
-Cannot GET /aass  
+Cannot GET /aass
 
-This is correct behavior. Nginx is doing the right thing, but the default-backend nodejs express server that it forwards the request to gives this message because it only handles /.   
+This is correct behavior. Nginx is doing the right thing, but the default-backend nodejs express server that it forwards the request to gives this message because it only handles /.
 
 # Example ingress config
 
-The k8s/ingress-example-dotnet-works-com.yml file contains an example of an Ingress service.  
+The k8s/ingress-example-dotnet-works-com.yml file contains an example of an Ingress service.
 
 The example configures https://example.dotnet-works.com/ with the default backend.
 
 # Letsencrypt rate limits
 
-If you try to issue too many certificates using the letsencrypt production environment you will get an error like this:  
+If you try to issue too many certificates using the letsencrypt production environment you will get an error like this:
 
-too many certificates (5) already issued for this exact set of domains in the last 168 hours.    
+too many certificates (5) already issued for this exact set of domains in the last 168 hours.
 
-You can try and copy the certificate from another kubernetes environment.  
+You can try and copy the certificate from another kubernetes environment.
 
-In the kubenetes environment where the certificate is available:  
+In the kubenetes environment where the certificate is available:
 
 ```
 kubectl get secret xxx-wildcard-tls -o yaml > xxx-wildcard-tls-secret.yml
@@ -416,7 +416,7 @@ To make it available in the host file system:
 mv xxx-wildcard-tls-secret.yml /src
 ```
 
-Then copy the certificate over, delete the old secret and create the new one by applying the yml file:  
+Then copy the certificate over, delete the old secret and create the new one by applying the yml file:
 
 ```
 mv /src/xxx-wildcard-tls-secret.yml .
@@ -426,9 +426,9 @@ kubectl apply -f xxx-wildcard-tls-secret.yml
 
 After a while the certificate READY flag should change from FALSE to True:
 
-| NAME                            | READY | SECRET                          | AGE |
-----------------------------------| ----- | ------------------------------- | --- |
-| xxx-wildcard-tls                | True  | xxx-wildcard-tls                | 5s | 
+| NAME             | READY | SECRET           | AGE |
+| ---------------- | ----- | ---------------- | --- |
+| xxx-wildcard-tls | True  | xxx-wildcard-tls | 5s  |
 
 You can force the process by deleting the certificate object:
 
@@ -442,9 +442,9 @@ https://blog.kubovy.eu/2020/05/16/retrieve-tls-certificates-from-kubernetes/
 
 # Manual certificate creation (without cert-manager)
 
-https://eff-certbot.readthedocs.io/en/stable/install.html  
+https://eff-certbot.readthedocs.io/en/stable/install.html
 
-Note that its possible to use the manual (interactive) mode or automated one.  
+Note that its possible to use the manual (interactive) mode or automated one.
 
 For the automated mode:
 
@@ -465,7 +465,7 @@ certbot certonly \
   -m jeroen_bijlsma@yahoo.com \
   -d testing.freelancedirekt.nl
 
-# For wildcard domains escape *  
+# For wildcard domains escape *
 #-d \*.your-domain.com
 
 # to see details (such as issuer)
@@ -489,9 +489,24 @@ certbot certonly \
 docker kill $ID
 ```
 
+# Extract certificates from the k8s cluster
+
+sudo apt update
+sudo apt install jq
+
+./compose/local/certificates/extract_certs.sh
+
+mv privkey.pem dnw.key
+mv fullchain.pem dnw.crt
+
+openssl rsa -in dnw.key -check
+openssl x509 -in dnw.crt -text -noout
+
+https://gist.github.com/csamsel/edb58d84363aa6c18be0f45be7908d34
+
 # Deploying certificates
 
-The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created.  
+The DOKS deployment example shows how to deploy the secrets for the certificates. If afterwards you delete the certificates no new CRs, orders and challenges will be created.
 
 There is an issue with having too much meta data in the secrets. See: https://stackoverflow.com/questions/51297136/kubectl-error-the-object-has-been-modified-please-apply-your-changes-to-the-la
 
@@ -500,7 +515,7 @@ Remove this meta data from the secrets:
 creationTimestamp  
 resourceVersion  
 selfLink  
-uid  
+uid
 
 # Invalid TLS certificates
 
@@ -544,23 +559,26 @@ The yml from do.yml
 # Azure Container Registry (ACR)
 
 https://docs.microsoft.com/en-us/azure/aks/cluster-container-registry-integration?tabs=azure-cli
-https://docs.microsoft.com/en-us/azure/container-registry/container-registry-delete  
+https://docs.microsoft.com/en-us/azure/container-registry/container-registry-delete
 
-For giving a Service Principal (SP) rights to the ACR see the compose/azurecli/create_cluster.sh files.  
+For giving a Service Principal (SP) rights to the ACR see the compose/azurecli/create_cluster.sh files.
 
 to be able to build images within the azcli container you can update the docker-compose.yml file:
 
- azurecli:
-    privileged: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+azurecli:
+privileged: true
+volumes: - /var/run/docker.sock:/var/run/docker.sock
 
 Also the docker cli needs to be installed in the container by updating the Dockerfile:
 
 # To be able to run docker in docker
+
 # Make sure in the docker-compose file to:
+
 # (1) add volume for /var/run/docker.sock:/var/run/docker.sock
+
 # (2) set privileged: true
+
 RUN apk add --update docker openrc
 RUN rc-update add docker boot
 
@@ -568,9 +586,9 @@ building images seems to work, but trying to tag and push them gives errors that
 
 # Helm
 
-Note that when you already installed objects in the k8s cluster using kubectl apply, you will need to delete those resources first (imperatively) before the helm install command works.  
+Note that when you already installed objects in the k8s cluster using kubectl apply, you will need to delete those resources first (imperatively) before the helm install command works.
 
-Refer to the different charts NOTES.txt files for useful command to test the helm templates.  
+Refer to the different charts NOTES.txt files for useful command to test the helm templates.
 
 Some examples of useful helm commands:
 
@@ -591,7 +609,7 @@ helm install aspnetapp ./helm \
 
 Getting everything working on ARM64 / AARCH64 is a bit of a challenge.
 
-For some reason the istio gateway pod does not start correctly (gives an error about node affinity). 
+For some reason the istio gateway pod does not start correctly (gives an error about node affinity).
 
 Using kind and pre-loading the istio gateway image (proxyv2:1.13.0 at the time of writing) seems to work though. This is probably a temporary bug.
 

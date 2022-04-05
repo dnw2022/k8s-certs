@@ -6,9 +6,9 @@
 # https://stacksimplify.com/azure-aks/create-aks-cluster-using-az-aks-cli/
 
 # Define variables
-AKS_RESOURCE_GROUP=rg-dnw \
+AKS_RESOURCE_GROUP=dnw-rg \
 AKS_SERVICE_PRINCIPAL_NAME=sp-dnw \
-AKS_SUBSCRIPTION_ID=45dad4eb-e885-48df-a5de-b1f9a02009b0 \
+AKS_SUBSCRIPTION_ID=f2485aef-25f1-418d-bb35-92098bbf3b08 \
 AKS_CONTRIBUTOR_ROLE_NAME=Contributor \
 AKS_CONTRIBUTOR_ROLE_ID=b24988ac-6180-42a0-ab88-20f7382dd24c \
 AKS_LOCATION=eastus \
@@ -17,7 +17,7 @@ AKS_ACR_NAME=acrdnw \
 AKS_ACR_LOGIN_SERVER=acrdnw.azurecr.io
 
 # Variables (set again by running appropriate commands below)
-AKS_CR_ID=/subscriptions/45dad4eb-e885-48df-a5de-b1f9a02009b0/resourceGroups/rg-dnw/providers/Microsoft.ContainerRegistry/registries/acrdnw \
+AKS_CR_ID=/subscriptions/$AKS_SUBSCRIPTION_ID/resourceGroups/rg-dnw/providers/Microsoft.ContainerRegistry/registries/acrdnw \
 AKS_SERVICE_PRINCIPAL_OBJECT_ID=8ff24eaf-8877-4ef1-b58f-3d17e3768208
 
 # Create resource group
