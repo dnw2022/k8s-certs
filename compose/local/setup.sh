@@ -70,8 +70,8 @@ else
   if [ $PRELOAD_IMAGES ]
   then
     echo "Preload ingress-nginx images"
-    docker pull k8s.gcr.io/ingress-nginx/controller:v1.1.1
-    kind load docker-image k8s.gcr.io/ingress-nginx/controller:v1.1.1
+    docker pull k8s.gcr.io/ingress-nginx/controller:v1.3.0
+    kind load docker-image k8s.gcr.io/ingress-nginx/controller:v1.3.0
   fi
 
   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -92,14 +92,14 @@ fi
 if [ $PRELOAD_IMAGES ]
 then
   echo "Preload cert-manager images"
-  docker pull quay.io/jetstack/cert-manager-cainjector:v1.7.1
-  kind load docker-image quay.io/jetstack/cert-manager-cainjector:v1.7.1
+  docker pull quay.io/jetstack/cert-manager-cainjector:v1.9.1
+  kind load docker-image quay.io/jetstack/cert-manager-cainjector:v1.9.1
 
-  docker pull quay.io/jetstack/cert-manager-controller:v1.7.1
-  kind load docker-image quay.io/jetstack/cert-manager-controller:v1.7.1
+  docker pull quay.io/jetstack/cert-manager-controller:v1.9.1
+  kind load docker-image quay.io/jetstack/cert-manager-controller:v1.9.1
 
-  docker pull quay.io/jetstack/cert-manager-webhook:v1.7.1
-  kind load docker-image quay.io/jetstack/cert-manager-webhook:v1.7.1
+  docker pull quay.io/jetstack/cert-manager-webhook:v1.9.1
+  kind load docker-image quay.io/jetstack/cert-manager-webhook:v1.9.1
 fi
 
 echo "Install cert-manager in cluster"
@@ -114,7 +114,7 @@ helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
-  --version v1.7.1 \
+  --version v1.9.1 \
   --set installCRDs=true
   # --set "extraArgs={--feature-gates=ExperimentalGatewayAPISupport=true}"
 
