@@ -92,7 +92,7 @@ apiTokenSecretRef:
 ```
 
 ```
-kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token={your api token}
+kubectl create secret generic cloudflare-api-token-secret -n cert-manager --from-literal api-token=$CLOUDFLARE_TOKEN
 ```
 
 or:

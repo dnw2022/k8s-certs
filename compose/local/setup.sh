@@ -41,8 +41,8 @@ then
 
   if [[ "$OSTYPE" == "linux-gnu"* ]]
   then
-    DNW_CERT_SECRET=$(cat ~/.secrets/dnw_cer_secret.yml)
-    FLD_CERT_SECRET=$(cat ~/.secrets/fld_cer_secret.yml)
+    DNW_CERT_SECRET=$(cat ~/.secrets/dotnet-works-com-wildcard-tls.yml)
+    FLD_CERT_SECRET=$(cat ~/.secrets/freelancedirekt-nl-wildcard-tls.yml)
   else
     DNW_CERT_SECRET=$(security find-generic-password -w -s 'secret_dotnetworks_com_wildcard' -a '$(id -un)' | base64 --decode)
     FLD_CERT_SECRET=$(security find-generic-password -w -s 'secret_freelancedirekt_nl_wildcard' -a '$(id -un)' | base64 --decode)
